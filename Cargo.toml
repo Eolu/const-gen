@@ -1,0 +1,16 @@
+[package]
+name = "const-gen"
+version = "0.1.0"
+authors = ["Griffin O'Neill <gsoneill1003@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "const_gen"
+path = "src/lib.rs"
+
+[features]
+phf = []
+derive = ["const-gen-derive"]
+
+[dependencies]
+const-gen-derive = { path = "../const-gen-derive", optional = true}
