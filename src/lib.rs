@@ -38,40 +38,6 @@ pub trait CompileConst
     }
 }
 
-/// Helps determine how to represent a type as a string. Simple types ought to
-/// just use Constant with an exact string representation, but more complex
-/// types (eg, anything with type parameters) will need to set this to Dependant.
-#[derive(Debug)]
-pub enum ConstType
-{
-    Constant(TokenStream),
-    Dependant
-}
-
-impl ConstType
-{
-    pub fn unwrap(&self) -> &TokenStream
-    {
-        match self
-        {
-            Self::Constant(s) => s,
-            Self::Dependant => panic!("Unable to determine const type")
-        }
-    }
-}
-
-impl quote::ToTokens for ConstType
-{
-    fn to_tokens(&self, tokens: &mut TokenStream)
-    {
-        match self
-        {
-            Self::Constant(s) => tokens.extend(quote!(#s)),
-            Self::Dependant => ()
-        }
-    }
-}
-
 macro_rules! numerics
 {
     ( $($t:ty),* ) => 
