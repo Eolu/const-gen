@@ -7,7 +7,8 @@ See this example:
 // build.rs
 
 // First, let's dummy up some structs. Enabling the "derive" feature allows
-// us to do this simply, but implementing the CompileConst trait 
+// us to do this simply, but implementing the CompileConst trait by hand is
+// straightforward.
 
 #[derive(CompileConst)]
 struct TestStruct
