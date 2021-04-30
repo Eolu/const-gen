@@ -112,6 +112,18 @@ fn main()
     println!("{:?}", TEST_ENUM_STRUCTLIKE);
 }
 ```
+## Out-of-the-box Implementations
+
+The following table shows what types have implementations of the CompileConst trait already defined
+
+|Type|Const Representation|
+--- | --- 
+|\<all numeric primitives\>|no conversion|
+|String, &str, str|&'static str|
+|Vec\<T\>, &[T]|&'static [T]|
+|Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConst Representation|
+|HashMap<K,V>|phf::Map\<K, V\>, with K and V's CompileConst Representation|
+|HashSet\<E\>|phf::Set\<E\>, with E's CompileConst Representation|
 
 ## Features
 
