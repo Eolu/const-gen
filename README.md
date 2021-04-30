@@ -71,7 +71,7 @@ fn main()
 
 Now, in our `main.rs` file we can do something like this:
 
-```rs
+```rust
 
 // Include our constants
 include!(concat!(env!("OUT_DIR"), "/const_gen.rs"));
