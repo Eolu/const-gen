@@ -24,4 +24,4 @@ phf = []
 derive = ["const-gen-derive"]
 
 [dependencies]
-const-gen-derive = { path = "../const-gen-derive", optional = true}
+const-gen-derive = { version = "0.1", optional = true}
