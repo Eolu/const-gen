@@ -130,7 +130,7 @@ The following table shows what types have implementations of the CompileConst tr
 At the current time, all features are default. 
 
 ### phf
-The `phf` feature implements the CompileConst trait for HashgMaps and HashSets. It will generate a `phf::Map` for HashMap types and a `phf::Set` for HashSet types. Note that `phf` does NOT need to be included in your build dependencies, but it out to be included in your runtime dependencies in order to use the constants.
+The `phf` feature implements the CompileConst trait for HashMaps and HashSets. It will generate a `phf::Map` for HashMap types and a `phf::Set` for HashSet types. Note that `phf` does NOT need to be included in your build dependencies, but it ought to be included in your runtime dependencies in order to use the constants.
 
 ### derive
 The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The requirement is that all members implement `CompileConst` as well.
