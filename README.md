@@ -125,7 +125,7 @@ The following table shows what types have implementations of the CompileConst tr
 |HashMap<K,V>|phf::Map\<K, V\>, with K and V's CompileConst representation|
 |HashSet\<E\>|phf::Set\<E\>, with E's CompileConst representation|
 |()|no conversion|
-|\<tuples with 2-6 variants\>|A tuple with the CompileConst representation of each variant|
+|\<tuples with 2-7 variants\>|A tuple with the CompileConst representation of each variant|
 
 ## Features
 
