@@ -6,6 +6,9 @@ See this example:
 ```rust
 // build.rs
 
+use const_gen::*;
+use std::{env, fs, path::Path};
+
 // First, let's dummy up some structs. Enabling the "derive" feature allows
 // us to do this simply, but implementing the CompileConst trait by hand is
 // straightforward.

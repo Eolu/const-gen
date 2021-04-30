@@ -2,16 +2,16 @@
 # It is not intended for manual editing.
 [[package]]
 name = "const-gen"
-version = "0.1.4"
+version = "0.1.5"
 dependencies = [
  "const-gen-derive",
 ]
 
 [[package]]
 name = "const-gen-derive"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9bcf16eb8ab6b6f6aeb3cef5b568974e2f9b360011c0eb39c93dec678184a22"
+checksum = "87164d36fd8d65002500da17b53ba6c82d77d767c07d043eb194a3c495bf4b6d"
 dependencies = [
  "proc-macro2",
  "quote",
