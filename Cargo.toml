@@ -1,14 +1,25 @@
 [package]
 name = "const-gen"
 version = "0.1.0"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
 authors = ["Griffin O'Neill <gsoneill1003@gmail.com>"]
+description = """
+A crate for generating (relatively) complex compile-time constants in rust.
+"""
 edition = "2018"
+keywords = ["const", "constants", "compile-time", "build"]
+homepage = "https://github.com/Eolu/const-gen"
+repository = "https://github.com/Eolu/const-gen"
+categories = ["accessibility", "config", "development-tools::build-utils"]
+documentation = "https://docs.rs/const_gen"
 
 [lib]
 name = "const_gen"
 path = "src/lib.rs"
 
 [features]
+default = ["derive", "phf"]
 phf = []
 derive = ["const-gen-derive"]
 
