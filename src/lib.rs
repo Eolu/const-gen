@@ -1,3 +1,6 @@
+use proc_macro2::TokenStream;
+use quote::quote;
+
 #[cfg(feature = "phf")]
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -10,25 +13,28 @@ mod test;
 /// Trait which defines how a type should be represented as a constant
 pub trait CompileConst
 {
-    const CONST_TYPE: ConstType;
-
     /// Get a string representation of a type. This must be implemented for each
     /// type. Types with generics may need to be able to access an instance of 
     /// one of its generic members and call this function in order to properly
     /// represent the type. Note that this is not necessarily a representation 
     /// of the ACTUAL type, but rather the type that should be used if this data
     /// is going to be represented as a compile-time constant.
-    fn const_type(&self) -> String;
+    fn const_type() -> TokenStream;
     /// Get a string representation of the current value in constant form. This 
     /// method is where the real magic happens, but self.const_declaration() is
     /// likely the only one you need to call.
-    fn const_val(&self) -> String;
+    fn const_val(&self) -> TokenStream;
     /// Takes a string (a SCREAMING_SNAKE_CASE string is preferred) to use as a
     /// constant name, then calls self.const_type() and self.const_val() in order
     /// to generate a Rust compile-time constant declaration statement.
-    fn const_declaration(&self, name: &str) -> String 
+    fn const_declaration(&self, name: &str) -> TokenStream 
     {
-        format!("const {}: {} = {};", name, self.const_type(), self.const_val())
+        let const_type = Self::const_type();
+        let const_val = self.const_val();
+        quote!
+        {
+            const #name: #const_type = #const_val
+        }
     }
 }
 
@@ -38,18 +44,30 @@ pub trait CompileConst
 #[derive(Debug)]
 pub enum ConstType
 {
-    Constant(&'static str),
+    Constant(TokenStream),
     Dependant
 }
 
 impl ConstType
 {
-    pub fn unwrap(&self) -> &'static str
+    pub fn unwrap(&self) -> &TokenStream
     {
         match self
         {
             Self::Constant(s) => s,
             Self::Dependant => panic!("Unable to determine const type")
+        }
+    }
+}
+
+impl quote::ToTokens for ConstType
+{
+    fn to_tokens(&self, tokens: &mut TokenStream)
+    {
+        match self
+        {
+            Self::Constant(s) => tokens.extend(quote!(#s)),
+            Self::Dependant => ()
         }
     }
 }
@@ -60,15 +78,14 @@ macro_rules! numerics
     {
         $(impl CompileConst for $t
         {
-            const CONST_TYPE: ConstType = ConstType::Constant(stringify!($t)); 
-            fn const_type(&self) -> String 
+            fn const_type() -> TokenStream 
             { 
-                Self::CONST_TYPE.unwrap().to_string()
+                quote!($t)
             }
 
-            fn const_val(&self) -> String 
+            fn const_val(&self) -> TokenStream 
             {
-                format!("{}{}", self, stringify!($t))
+                quote!(#self, stringify!($t))
             }
         })*
     }
@@ -81,15 +98,14 @@ macro_rules! strings
     {
         $(impl CompileConst for $t
         {
-            const CONST_TYPE: ConstType = ConstType::Constant("&'static str");
-            fn const_type(&self) -> String 
+            fn const_type() -> TokenStream 
             { 
-                Self::CONST_TYPE.unwrap().to_string()
+                quote!(&'static str)
             }
         
-            fn const_val(&self) -> String 
+            fn const_val(&self) -> TokenStream 
             {
-                format!("\"{}\"", self)
+                quote!(#self)
             }
         })*
     }
@@ -102,23 +118,14 @@ macro_rules! arrays
     {
         $(impl<T: CompileConst> CompileConst for $t
         {
-            const CONST_TYPE: ConstType = ConstType::Dependant;
-            fn const_type(&self) -> String 
+            fn const_type() -> TokenStream 
             { 
-                match self.iter().next()
-                {
-                    Some(t) => format!("&'static [{}]", t.const_type()),
-                    None => format!("&'static [{}]", T::CONST_TYPE.unwrap())
-                }
+                quote!(&'static [#(T::const_type())])
             }
         
-            fn const_val(&self) -> String 
+            fn const_val(&self) -> TokenStream 
             {
-                format!("&[{}]", self
-                    .into_iter()
-                    .map(|e| e.const_val())
-                    .collect::<Vec<String>>()
-                    .join(","))
+                quote!(&[#(self.into_iter().map(|e| e.const_val()).collect::<Vec<String>>().join(","))])
             }
         })*
     }
@@ -131,12 +138,11 @@ macro_rules! derefs
     {
         $(impl<T: CompileConst $(+ $bound)? > CompileConst for $t
         {
-            const CONST_TYPE: ConstType = T::CONST_TYPE;
-            fn const_type(&self) -> String 
+            fn const_type() -> TokenStream 
             { 
-                (**self).const_type()
+                T::const_type()
             }
-            fn const_val(&self) -> String 
+            fn const_val(&self) -> TokenStream 
             {
                 (**self).const_val()
             }
@@ -154,46 +160,28 @@ derefs!
 #[cfg(feature = "phf")]
 impl<K: CompileConst, V: CompileConst> CompileConst for HashMap<K,V>
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        match self.iter().next()
-        {
-            Some((k,v)) => format!("phf::Map<{}, {}>", k.const_type(), v.const_type()),
-            None => format!("phf::Map<{}, {}>", K::CONST_TYPE.unwrap(), V::CONST_TYPE.unwrap())
-        }
+        quote!(phf::Map<#(K::const_type()), #(V::const_type())>)
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("phf::phf_map!{{{}}}", self
-            .into_iter()
-            .map(|(k,v)| format!("{} => {}", k.const_val(), v.const_val()))
-            .collect::<Vec<String>>()
-            .join(","))
+        quote!(phf::phf_map!{ #(self.into_iter().map(|(k,v)| format!("{} => {}", k.const_val(), v.const_val())).collect::<Vec<String>>().join(",")) })
     }
 }
 
 #[cfg(feature = "phf")]
 impl<E: CompileConst> CompileConst for HashSet<E>
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        match self.iter().next()
-        {
-            Some(e) => format!("phf::Set<{}>", e.const_type()),
-            None => format!("phf::Set<{}>", E::CONST_TYPE.unwrap())
-        }
+        quote!(phf::Set<#(E::const_type())>)
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("phf::phf_set!{{{}}}", self
-            .into_iter()
-            .map(|e| format!("{}", e.const_val()))
-            .collect::<Vec<String>>()
-            .join(","))
+        quote!(phf::phf_set!{#(self.into_iter().map(|e| format!("{}", e.const_val())).collect::<Vec<String>>().join(","))})
     }
 }
 
@@ -201,46 +189,41 @@ impl<E: CompileConst> CompileConst for HashSet<E>
 
 impl CompileConst for ()
 {
-    const CONST_TYPE: ConstType = ConstType::Constant("()");
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        String::from(Self::CONST_TYPE.unwrap())
+        quote!(())
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        String::from(Self::CONST_TYPE.unwrap())
+        quote!(#(Self::CONST_TYPE))
     }
 }
 
 impl<T: CompileConst, U: CompileConst> CompileConst for (T, U)
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        format!("({},{})", self.0.const_type(), self.1.const_type())
+        quote!((#(T::const_type()),#(U::const_type())))
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("({},{})", self.0.const_val(), self.1.const_val())
+        quote!((#(self.0.const_val()),#(self.1.const_val())))
     }
 }
 
 impl<T, U, V> CompileConst for (T, U, V)
     where T: CompileConst, U: CompileConst, V: CompileConst
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        format!("({},{},{})", self.0.const_type(), 
-            self.1.const_type(), self.2.const_type())
+        quote!((#(T::const_type()),#(U::const_type()),#(V::const_type())))
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("({},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val())
+        quote!((#(self.0.const_val()),#(self.1.const_val()),#(self.2.const_val())))
     }
 }
 
@@ -248,19 +231,14 @@ impl<T, U, V, W> CompileConst for (T, U, V, W)
     where T: CompileConst, U: CompileConst, V: CompileConst,
           W: CompileConst
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        format!("({},{},{},{})", self.0.const_type(), 
-            self.1.const_type(), self.2.const_type(), 
-            self.3.const_type())
+        quote!((#(T::const_type()),#(U::const_type()),#(V::const_type()),#(W::const_type())))
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("({},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val())
+        quote!((#(self.0.const_val()),#(self.1.const_val()),#(self.2.const_val()),#(self.3.const_val())))
     }
 }
 
@@ -268,19 +246,28 @@ impl<T, U, V, W, X> CompileConst for (T, U, V, W, X)
     where T: CompileConst, U: CompileConst, V: CompileConst,
           W: CompileConst, X: CompileConst
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        format!("({},{},{},{},{})", self.0.const_type(), 
-            self.1.const_type(), self.2.const_type(), 
-            self.3.const_type(), self.4.const_type())
+        quote!
+        (
+            (#(T::const_type()),
+            #(U::const_type()),
+            #(V::const_type()),
+            #(W::const_type()),
+            #(X::const_type()))
+        )
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("({},{},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val(), self.4.const_val())
+        quote!
+        (
+            (#(self.0.const_val()),
+            #(self.1.const_val()),
+            #(self.2.const_val()),
+            #(self.3.const_val()),
+            #(self.4.const_val()))
+        )
     }
 }
 
@@ -288,21 +275,30 @@ impl<T, U, V, W, X, Y> CompileConst for (T, U, V, W, X, Y)
     where T: CompileConst, U: CompileConst, V: CompileConst,
           W: CompileConst, X: CompileConst, Y: CompileConst
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        format!("({},{},{},{},{},{})", self.0.const_type(), 
-            self.1.const_type(), self.2.const_type(), 
-            self.3.const_type(), self.4.const_type(), 
-            self.5.const_type())
+        quote!
+        (
+            (#(T::const_type()),
+            #(U::const_type()),
+            #(V::const_type()),
+            #(W::const_type()),
+            #(X::const_type()),
+            #(Y::const_type()))
+        )
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("({},{},{},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val(), self.4.const_val(), 
-            self.5.const_val())
+        quote!
+        (
+            (#(self.0.const_val()),
+            #(self.1.const_val()),
+            #(self.2.const_val()),
+            #(self.3.const_val()),
+            #(self.4.const_val()),
+            #(self.5.const_val()))
+        )
     }
 }
 
@@ -311,20 +307,31 @@ impl<T, U, V, W, X, Y, Z> CompileConst for (T, U, V, W, X, Y, Z)
           W: CompileConst, X: CompileConst, Y: CompileConst, 
           Z: CompileConst
 {
-    const CONST_TYPE: ConstType = ConstType::Dependant;
-    fn const_type(&self) -> String 
+    fn const_type() -> TokenStream 
     {
-        format!("({},{},{},{},{},{},{})", self.0.const_type(), 
-            self.1.const_type(), self.2.const_type(), 
-            self.3.const_type(), self.4.const_type(), 
-            self.5.const_type(), self.6.const_type())
+        quote!
+        (
+            (#(T::const_type()),
+            #(U::const_type()),
+            #(V::const_type()),
+            #(W::const_type()),
+            #(X::const_type()),
+            #(Y::const_type()),
+            #(Z::const_type()))
+        )
     }
 
-    fn const_val(&self) -> String 
+    fn const_val(&self) -> TokenStream 
     {
-        format!("({},{},{},{},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val(), self.4.const_val(), 
-            self.5.const_val(), self.6.const_val())
+        quote!
+        (
+            (#(self.0.const_val()),
+            #(self.1.const_val()),
+            #(self.2.const_val()),
+            #(self.3.const_val()),
+            #(self.4.const_val()),
+            #(self.5.const_val()),
+            #(self.6.const_val()))
+        )
     }
 }
