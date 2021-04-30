@@ -196,3 +196,135 @@ impl<E: CompileConst> CompileConst for HashSet<E>
             .join(","))
     }
 }
+
+// Implementation for various-sized tuples
+
+impl CompileConst for ()
+{
+    const CONST_TYPE: ConstType = ConstType::Constant("()");
+    fn const_type(&self) -> String 
+    {
+        String::from(Self::CONST_TYPE.unwrap())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        String::from(Self::CONST_TYPE.unwrap())
+    }
+}
+
+impl<T: CompileConst, U: CompileConst> CompileConst for (T, U)
+{
+    const CONST_TYPE: ConstType = ConstType::Dependant;
+    fn const_type(&self) -> String 
+    {
+        format!("({},{})", self.0.const_type(), self.1.const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        format!("({},{})", self.0.const_val(), self.1.const_val())
+    }
+}
+
+impl<T, U, V> CompileConst for (T, U, V)
+    where T: CompileConst, U: CompileConst, V: CompileConst
+{
+    const CONST_TYPE: ConstType = ConstType::Dependant;
+    fn const_type(&self) -> String 
+    {
+        format!("({},{},{})", self.0.const_type(), 
+            self.1.const_type(), self.2.const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        format!("({},{},{})", self.0.const_val(), 
+            self.1.const_val(), self.2.const_val())
+    }
+}
+
+impl<T, U, V, W> CompileConst for (T, U, V, W)
+    where T: CompileConst, U: CompileConst, V: CompileConst,
+          W: CompileConst
+{
+    const CONST_TYPE: ConstType = ConstType::Dependant;
+    fn const_type(&self) -> String 
+    {
+        format!("({},{},{},{})", self.0.const_type(), 
+            self.1.const_type(), self.2.const_type(), 
+            self.3.const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        format!("({},{},{},{})", self.0.const_val(), 
+            self.1.const_val(), self.2.const_val(), 
+            self.3.const_val())
+    }
+}
+
+impl<T, U, V, W, X> CompileConst for (T, U, V, W, X)
+    where T: CompileConst, U: CompileConst, V: CompileConst,
+          W: CompileConst, X: CompileConst
+{
+    const CONST_TYPE: ConstType = ConstType::Dependant;
+    fn const_type(&self) -> String 
+    {
+        format!("({},{},{},{},{})", self.0.const_type(), 
+            self.1.const_type(), self.2.const_type(), 
+            self.3.const_type(), self.4.const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        format!("({},{},{},{},{})", self.0.const_val(), 
+            self.1.const_val(), self.2.const_val(), 
+            self.3.const_val(), self.4.const_val())
+    }
+}
+
+impl<T, U, V, W, X, Y> CompileConst for (T, U, V, W, X, Y)
+    where T: CompileConst, U: CompileConst, V: CompileConst,
+          W: CompileConst, X: CompileConst, Y: CompileConst
+{
+    const CONST_TYPE: ConstType = ConstType::Dependant;
+    fn const_type(&self) -> String 
+    {
+        format!("({},{},{},{},{},{})", self.0.const_type(), 
+            self.1.const_type(), self.2.const_type(), 
+            self.3.const_type(), self.4.const_type(), 
+            self.5.const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        format!("({},{},{},{},{},{})", self.0.const_val(), 
+            self.1.const_val(), self.2.const_val(), 
+            self.3.const_val(), self.4.const_val(), 
+            self.5.const_val())
+    }
+}
+
+impl<T, U, V, W, X, Y, Z> CompileConst for (T, U, V, W, X, Y, Z)
+    where T: CompileConst, U: CompileConst, V: CompileConst,
+          W: CompileConst, X: CompileConst, Y: CompileConst, 
+          Z: CompileConst
+{
+    const CONST_TYPE: ConstType = ConstType::Dependant;
+    fn const_type(&self) -> String 
+    {
+        format!("({},{},{},{},{},{},{})", self.0.const_type(), 
+            self.1.const_type(), self.2.const_type(), 
+            self.3.const_type(), self.4.const_type(), 
+            self.5.const_type(), self.6.const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        format!("({},{},{},{},{},{},{})", self.0.const_val(), 
+            self.1.const_val(), self.2.const_val(), 
+            self.3.const_val(), self.4.const_val(), 
+            self.5.const_val(), self.6.const_val())
+    }
+}

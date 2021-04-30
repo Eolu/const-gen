@@ -121,9 +121,11 @@ The following table shows what types have implementations of the CompileConst tr
 |\<all numeric primitives\>|no conversion|
 |String, &str, str|&'static str|
 |Vec\<T\>, &[T]|&'static [T]|
-|Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConst Representation|
-|HashMap<K,V>|phf::Map\<K, V\>, with K and V's CompileConst Representation|
-|HashSet\<E\>|phf::Set\<E\>, with E's CompileConst Representation|
+|Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConst representation|
+|HashMap<K,V>|phf::Map\<K, V\>, with K and V's CompileConst representation|
+|HashSet\<E\>|phf::Set\<E\>, with E's CompileConst representation|
+|()|no conversion|
+|\<tuples with 2-6 variants\>|A tuple with the CompileConst representation of each variant|
 
 ## Features
 
