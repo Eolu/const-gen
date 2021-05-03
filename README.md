@@ -9,9 +9,9 @@ See this example:
 use const_gen::*;
 use std::{env, fs, path::Path};
 
-// First, let's dummy up some structs. Enabling the "derive" feature allows
-// us to do this simply, but implementing the CompileConst trait by hand is
-// straightforward.
+// First, let's dummy up some structs. Enabling the "derive" 
+// feature allows us to do this simply, but implementing the
+// CompileConst trait by hand is straightforward.
 
 #[derive(CompileConst)]
 struct TestStruct
@@ -33,44 +33,54 @@ enum TestEnum
 
 fn main() 
 {
-    // Use the OUT_DIR environment variable to get an appropriate path.
+    // Use the OUT_DIR environment variable to get an 
+    // appropriate path.
     let out_dir = env::var_os("OUT_DIR").unwrap();
     let dest_path = Path::new(&out_dir).join("const_gen.rs");
 
-    // Now let's dummy up some data to use in our const generation
+    // Now let's dummy up some data to use in our const 
+    // generation
     let test_vec: Vec<u8> = vec!(1,2,3,4,5,10,4);
-    let test_struct = TestStruct{ test_u8: 12, test_vec: vec!(String::from("Hello there.")) };
+    let test_struct = TestStruct
+    { 
+        test_u8: 12, 
+        test_vec: vec!(String::from("Hello there.")) 
+    };
     let test_tup_struct = TestTup(4, 55,);
     let test_enum = TestEnum::Variant1;
     let test_enum_tup = TestEnum::Variant2(23);
     let test_enum_structlike = TestEnum::Variant3{ named: 78 };
 
-    // Now we'll generate the const declarations. We're also going to test with some
-    // primitive types. 
+    // Now we'll generate the const declarations. We're also 
+    // going to test with some primitive types. 
     let const_declarations = vec!
     {
-        // Here are type definitions for our enums and structs above. Attributes
-        // will not be preserved, so we need to pass any we want in.
+        // Here are type definitions for our enums and structs 
+        // above. Attributes will not be preserved, so we need 
+        // to pass any we want in.
         const_definition!(#[derive(Debug)] TestStruct),
         const_definition!(#[derive(Debug)] TestTup),
         const_definition!(#[derive(Debug)] TestEnum),
 
-        // And here are constant definitions for particular values
+        // And here are constant definitions for particular 
+        // values.
         27u8.const_declaration("TEST_U8"),
         33.5f32.const_declaration("TEST_F32"),
         test_vec.const_declaration("TEST_VEC"),
         "I'm a string!".const_declaration("TEST_STRING"),
-        std::borrow::Cow::from("Cow!").const_declaration("TEST_COW"),
+        std::borrow::Cow::from("Cow!")
+            .const_declaration("TEST_COW"),
         test_struct.const_declaration("TEST_STRUCT"),
         test_tup_struct.const_declaration("TEST_TUP_STRUCT"),
         test_enum.const_declaration("TEST_ENUM"),
         test_enum_tup.const_declaration("TEST_ENUM_TUP"),
-        test_enum_structlike.const_declaration("TEST_ENUM_STRUCTLIKE")
+        test_enum_structlike
+            .const_declaration("TEST_ENUM_STRUCTLIKE")
     }.join("\n");
 
-    // If the "phf" feature is enabled, this crate will also support converting
-    // HashMap and HashSet types into compile-time constant phf map and set types 
-    // respectively.
+    // If the "phf" feature is enabled, this crate will also 
+    // support converting HashMap and HashSet types into 
+    // compile-time constant phf map and set types respectively.
 
     // Lastly, output to the destination file.
     fs::write(&dest_path, const_declarations).unwrap();
@@ -87,8 +97,8 @@ Now, in our `main.rs` file we can do something like this:
 // Include our constants
 include!(concat!(env!("OUT_DIR"), "/const_gen.rs"));
 
-// And that's it, we can access all of the const values below. It plays quite
-// well with rust-analyzer, etc
+// And that's it, we can access all of the const values below.
+// It plays quite well with rust-analyzer, etc
 fn main() 
 {
     println!("{}", TEST_U8);
