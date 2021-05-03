@@ -19,6 +19,7 @@ struct TestStruct
     test_u8: u8,
     test_vec: Vec<String>,
 }
+
 #[derive(CompileConst)]
 struct TestTup(u8, u16);
 
@@ -48,7 +49,7 @@ fn main()
     // primitive types. 
     let const_declarations = vec!
     {
-        // Here are type definitions for our enums and structs above Attributes
+        // Here are type definitions for our enums and structs above. Attributes
         // will not be preserved, so we need to pass any we want in.
         const_definition!(#[derive(Debug)] TestStruct),
         const_definition!(#[derive(Debug)] TestTup),
