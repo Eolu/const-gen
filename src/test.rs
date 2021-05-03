@@ -22,8 +22,23 @@ fn test_struct()
     let test_struct = TestStruct{test_u8: 21, test_vec: vec!(String::from("Hello there."))};
     assert_eq!
     (
+        const_definition!(#[derive(Debug)] TestStruct), 
+        format!("#[derive(Debug)]struct TestStruct{{ test_u8: u8, test_vec: &\'static [&\'static str], }}")
+    );
+    assert_eq!
+    (
         test_struct.const_declaration("TEST_STRUCT"), 
         format!("const TEST_STRUCT: TestStruct = TestStruct {{ test_u8: 21u8, test_vec: &[\"Hello there.\"], }};")
+    );
+}
+
+#[test]
+fn test_struct_definition()
+{
+    assert_eq!
+    (
+        const_definition!(#[derive(Debug)] TestStruct), 
+        format!("#[derive(Debug)]struct TestStruct{{ test_u8: u8, test_vec: &\'static [&\'static str], }}")
     );
 }
 
