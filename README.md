@@ -48,6 +48,13 @@ fn main()
     // primitive types. 
     let const_declarations = vec!
     {
+        // Here are type definitions for our enums and structs above Attributes
+        // will not be preserved, so we need to pass any we want in.
+        const_definition!(#[derive(Debug)] TestStruct),
+        const_definition!(#[derive(Debug)] TestTup),
+        const_definition!(#[derive(Debug)] TestEnum),
+
+        // And here are constant definitions for particular values
         27u8.const_declaration("TEST_U8"),
         33.5f32.const_declaration("TEST_F32"),
         test_vec.const_declaration("TEST_VEC"),
@@ -79,26 +86,6 @@ Now, in our `main.rs` file we can do something like this:
 // Include our constants
 include!(concat!(env!("OUT_DIR"), "/const_gen.rs"));
 
-// This struct mirrors the TestStruct we defined in build.rs, but the 
-// heap-allocated vectors and strings have been replaced with static slices
-#[derive(Debug)]
-struct TestStruct
-{
-    test_u8: u8,
-    test_vec: &'static [&'static str],
-}
-
-#[derive(Debug)]
-struct TestTup(u8, u16);
-
-#[derive(Debug)]
-enum TestEnum
-{
-    Variant1,
-    Variant2(u8),
-    Variant3{ named: u8 }
-}
-
 // And that's it, we can access all of the const values below. It plays quite
 // well with rust-analyzer, etc
 fn main() 
@@ -115,6 +102,37 @@ fn main()
     println!("{:?}", TEST_ENUM_STRUCTLIKE);
 }
 ```
+
+The actual generated output looks like (an unformatted version of) this:
+```rust
+#[derive(Debug)]
+struct TestStruct {
+    test_u8: u8,
+    test_vec: &'static [&'static str],
+}
+#[derive(Debug)]
+struct TestTup(u8, u16);
+#[derive(Debug)]
+enum TestEnum {
+    Variant1,
+    Variant2(u8),
+    Variant3 { named: u8 },
+}
+const TEST_U8: u8 = 27u8;
+const TEST_F32: f32 = 33.5f32;
+const TEST_VEC: &'static [u8] = &[1u8, 2u8, 3u8, 4u8, 5u8, 10u8, 4u8];
+const TEST_STRING: &'static str = "I'm a string!";
+const TEST_COW: &'static str = "Cow!";
+const TEST_STRUCT: TestStruct = TestStruct {
+    test_u8: 12u8,
+    test_vec: &["Hello there."],
+};
+const TEST_TUP_STRUCT: TestTup = TestTup(4u8, 55u16);
+const TEST_ENUM: TestEnum = TestEnum::Variant1;
+const TEST_ENUM_TUP: TestEnum = TestEnum::Variant2(23u8);
+const TEST_ENUM_STRUCTLIKE: TestEnum = TestEnum::Variant3 { named: 78u8 };
+```
+
 ## Out-of-the-box Implementations
 
 The following table shows what types have implementations of the CompileConst trait already defined
