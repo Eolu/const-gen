@@ -148,6 +148,10 @@ The following table shows what types have implementations of the CompileConst tr
 |()|no conversion|
 |\<tuples with 2-7 variants\>|A tuple with the CompileConst representation of each variant|
 
+## Limitations
+
+This crate will use the endianness, pointer widths, etc of the host machine rather than the target, unlike normal consts. This could probably be solved with some conditional code at a few key points of generation, but until then beware when working on a native level.
+
 ## Features
 
 At the current time, all features are default. 
