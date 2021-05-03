@@ -150,7 +150,7 @@ The following table shows what types have implementations of the CompileConst tr
 
 ## Limitations
 
-This crate will use the endianness, pointer widths, etc of the host machine rather than the target, unlike normal consts. This could probably be solved with some conditional code at a few key points of generation, but until then beware when working on a native level.
+This crate will use the endianness, pointer widths, etc of the host machine rather than the target, unlike normal consts. It's still unclear if this caveat could be resolved with a reasonable amount of effort.
 
 ## Features
 
