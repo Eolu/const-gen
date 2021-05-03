@@ -17,6 +17,8 @@ dependencies = [
 [[package]]
 name = "const-gen-derive"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9efa4059c316efc93445aaad63665c80cc9b31164e4cc691309ce44ed9929017"
 dependencies = [
  "proc-macro2",
  "quote",
