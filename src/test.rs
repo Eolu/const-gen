@@ -27,7 +27,7 @@ fn test_struct()
     );
     assert_eq!
     (
-        test_struct.const_declaration("TEST_STRUCT"), 
+        const_declaration!(TEST_STRUCT = test_struct),
         format!("const TEST_STRUCT: TestStruct = TestStruct {{ test_u8: 21u8, test_vec: &[\"Hello there.\"], }};")
     );
 }
@@ -55,7 +55,7 @@ fn test_tup_struct()
     let test_tup_struct = TestTup(4, 55);
     assert_eq!
     (
-        test_tup_struct.const_declaration("TEST_TUP_STRUCT"), 
+        const_declaration!(TEST_TUP_STRUCT = test_tup_struct),
         format!("const TEST_TUP_STRUCT: TestTup = TestTup(4u8,55u16,);")
     );
 }
@@ -83,21 +83,21 @@ fn test_enum()
     let test_enum = TestEnum::Variant1;
     assert_eq!
     (
-        test_enum.const_declaration("TEST_ENUM"), 
+        const_declaration!(TEST_ENUM = test_enum),
         format!("const TEST_ENUM: TestEnum = TestEnum::Variant1;")
     );
 
     let test_enum = TestEnum::Variant2(22);
     assert_eq!
     (
-        test_enum.const_declaration("TEST_ENUM"), 
+        const_declaration!(TEST_ENUM = test_enum),
         format!("const TEST_ENUM: TestEnum = TestEnum::Variant2(22u8,);")
     );
 
     let test_enum = TestEnum::Variant3 { named: 0 };
     assert_eq!
     (
-        test_enum.const_declaration("TEST_ENUM"), 
+        const_declaration!(TEST_ENUM = test_enum),
         format!("const TEST_ENUM: TestEnum = TestEnum::Variant3{{named:0u8,}};")
     );
 }
@@ -107,17 +107,17 @@ fn test_strings()
 {
     assert_eq!
     (
-        "I'm a string!".const_declaration("TEST_STR"), 
+        const_declaration!(TEST_STR = "I'm a string!"),
         format!("const TEST_STR: &'static str = \"I'm a string!\";")
     );
     assert_eq!
     (
-        String::from("I'm a string!").const_declaration("TEST_STRING"), 
+        const_declaration!(TEST_STRING = String::from("I'm a string!")),
         format!("const TEST_STRING: &'static str = \"I'm a string!\";")
     );
     assert_eq!
     (
-        std::borrow::Cow::from("I'm a string!").const_declaration("TEST_COW"), 
+        const_declaration!(TEST_COW = std::borrow::Cow::from("I'm a string!")),
         format!("const TEST_COW: &'static str = \"I'm a string!\";")
     );
 }
@@ -157,7 +157,7 @@ fn test_map()
     test_map.insert("str", 67);
     assert_eq!
     (
-        test_map.const_declaration("TEST_MAP"), 
+        const_declaration!(TEST_MAP = test_map),
         format!("const TEST_MAP: phf::Map<&\'static str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
     );
 }
@@ -170,7 +170,7 @@ fn test_set()
     test_set.insert(34);
     assert_eq!
     (
-        test_set.const_declaration("TEST_SET"), 
+        const_declaration!(TEST_SET = test_set),
         format!("const TEST_SET: phf::Set<i32> = phf::phf_set!{{34i32}};")
     );
 }
@@ -181,7 +181,7 @@ fn test_vec()
     let test_vec: Vec<u8> = vec!(1,2,3,4,5,10,4);
     assert_eq!
     (
-        test_vec.const_declaration("TEST_VEC"), 
+        const_declaration!(TEST_VEC = test_vec),
         format!("const TEST_VEC: &'static [u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
     );
 }

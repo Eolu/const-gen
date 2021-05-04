@@ -9,13 +9,28 @@ pub use const_gen_derive::*;
 mod test;
 
 /// A macro to help in the creation of const definitions. Allows this syntax:
-/// `const_definition!(#[derive(Debug)] TypeName)`
+/// `const_definition!(#[attribute1] #[attributeN] TypeName)`
+/// This is syntactic sugar for calling the `CompileConst::const_definition`
+/// function.
 #[macro_export]
 macro_rules! const_definition
 {
     ( $(#[$attr:meta])* $ty:ty) => 
     {
         <$ty>::const_definition(stringify!($(#[$attr])*))
+    }
+}
+
+/// A macro to help in the creation of const declarations. Allows this syntax:
+/// `const_declaration!(VAR_NAME = value)`
+/// This is syntactic sugar for calling the `CompileConst::const_declaration`
+/// function.
+#[macro_export]
+macro_rules! const_declaration
+{
+    ($name:ident = $($val:tt)*) => 
+    {
+        $($val)*.const_declaration(stringify!($name))
     }
 }
 

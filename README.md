@@ -56,26 +56,24 @@ fn main()
     let const_declarations = vec!
     {
         // Here are type definitions for our enums and structs 
-        // above. Attributes will not be preserved, so we need 
-        // to pass any we want in.
+        // above. Attributes from build.rs will not be preserved, 
+        // so we need to pass any we want in.
         const_definition!(#[derive(Debug)] TestStruct),
         const_definition!(#[derive(Debug)] TestTup),
         const_definition!(#[derive(Debug)] TestEnum),
 
         // And here are constant definitions for particular 
         // values.
-        27u8.const_declaration("TEST_U8"),
-        33.5f32.const_declaration("TEST_F32"),
-        test_vec.const_declaration("TEST_VEC"),
-        "I'm a string!".const_declaration("TEST_STRING"),
-        std::borrow::Cow::from("Cow!")
-            .const_declaration("TEST_COW"),
-        test_struct.const_declaration("TEST_STRUCT"),
-        test_tup_struct.const_declaration("TEST_TUP_STRUCT"),
-        test_enum.const_declaration("TEST_ENUM"),
-        test_enum_tup.const_declaration("TEST_ENUM_TUP"),
-        test_enum_structlike
-            .const_declaration("TEST_ENUM_STRUCTLIKE")
+        const_declaration!(TEST_U8 = 27u8),
+        const_declaration!(TEST_F32 = 33.5f32),
+        const_declaration!(TEST_VEC = test_vec),
+        const_declaration!(TEST_STRING = "I'm a string!"),
+        const_declaration!(TEST_COW = std::borrow::Cow::from("Cow!")),
+        const_declaration!(TEST_STRUCT = test_struct),
+        const_declaration!(TEST_TUP_STRUCT = test_tup_struct),
+        const_declaration!(TEST_ENUM = test_enum),
+        const_declaration!(TEST_ENUM_TUP = test_enum_tup),
+        const_declaration!(TEST_ENUM_STRUCTLIKE = test_enum_structlike)
     }.join("\n");
 
     // If the "phf" feature is enabled, this crate will also 
@@ -117,31 +115,38 @@ fn main()
 The actual generated output looks like (an unformatted version of) this:
 ```rust
 #[derive(Debug)]
-struct TestStruct {
+struct TestStruct 
+{
     test_u8: u8,
     test_vec: &'static [&'static str],
 }
 #[derive(Debug)]
 struct TestTup(u8, u16);
 #[derive(Debug)]
-enum TestEnum {
+enum TestEnum 
+{
     Variant1,
     Variant2(u8),
     Variant3 { named: u8 },
 }
 const TEST_U8: u8 = 27u8;
 const TEST_F32: f32 = 33.5f32;
-const TEST_VEC: &'static [u8] = &[1u8, 2u8, 3u8, 4u8, 5u8, 10u8, 4u8];
+const TEST_VEC: &'static [u8] = 
+    &[1u8, 2u8, 3u8, 4u8, 5u8, 10u8, 4u8];
 const TEST_STRING: &'static str = "I'm a string!";
 const TEST_COW: &'static str = "Cow!";
-const TEST_STRUCT: TestStruct = TestStruct {
+const TEST_STRUCT: TestStruct = TestStruct 
+{
     test_u8: 12u8,
     test_vec: &["Hello there."],
 };
 const TEST_TUP_STRUCT: TestTup = TestTup(4u8, 55u16);
 const TEST_ENUM: TestEnum = TestEnum::Variant1;
 const TEST_ENUM_TUP: TestEnum = TestEnum::Variant2(23u8);
-const TEST_ENUM_STRUCTLIKE: TestEnum = TestEnum::Variant3 { named: 78u8 };
+const TEST_ENUM_STRUCTLIKE: TestEnum = TestEnum::Variant3
+{ 
+    named: 78u8
+};
 ```
 
 ## Out-of-the-box Implementations
