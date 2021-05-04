@@ -68,12 +68,14 @@ fn main()
         const_declaration!(TEST_F32 = 33.5f32),
         const_declaration!(TEST_VEC = test_vec),
         const_declaration!(TEST_STRING = "I'm a string!"),
-        const_declaration!(TEST_COW = std::borrow::Cow::from("Cow!")),
+        const_declaration!(TEST_COW = 
+            std::borrow::Cow::from("Cow!")),
         const_declaration!(TEST_STRUCT = test_struct),
         const_declaration!(TEST_TUP_STRUCT = test_tup_struct),
         const_declaration!(TEST_ENUM = test_enum),
         const_declaration!(TEST_ENUM_TUP = test_enum_tup),
-        const_declaration!(TEST_ENUM_STRUCTLIKE = test_enum_structlike)
+        const_declaration!(TEST_ENUM_STRUCTLIKE = 
+            test_enum_structlike)
     }.join("\n");
 
     // Note: The `const_definition!` and `const_declaration!` 
