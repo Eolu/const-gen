@@ -76,6 +76,16 @@ fn main()
         const_declaration!(TEST_ENUM_STRUCTLIKE = test_enum_structlike)
     }.join("\n");
 
+    // Note: The `const_definition!` and `const_declaration!` 
+    // macros above are just simple wrappers for CompileConst 
+    // trait methods of the same name. Using those methods
+    // would entail the following sytax:
+    // TestStruct::const_definition("#[derive(Debug)]")
+    // test_struct.const_declaration("TEST_STRUCT")
+    // These may be preferable in cases where const names
+    // or type attributes have been procedurally generated
+    // somehow and need to be treated as strings.
+
     // If the "phf" feature is enabled, this crate will also 
     // support converting HashMap and HashSet types into 
     // compile-time constant phf map and set types respectively.
