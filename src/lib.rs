@@ -38,15 +38,11 @@ macro_rules! const_declaration
 pub trait CompileConst
 {
     /// Get a string representation of a type. This must be implemented for each
-    /// type. Types with generics may need to be able to access an instance of 
-    /// one of its generic members and call this function in order to properly
-    /// represent the type. Note that this is not necessarily a representation 
+    /// type. Note that this is not necessarily a representation 
     /// of the ACTUAL type, but rather the type that should be used if this data
     /// is going to be represented as a compile-time constant.
     fn const_type() -> String;
-    /// Get a string representation of the current value in constant form. This 
-    /// method is where the real magic happens, but self.const_declaration() is
-    /// likely the only one you need to call.
+    /// Get a string representation of the current value in constant form.
     fn const_val(&self) -> String;
     /// Takes a string (a SCREAMING_SNAKE_CASE string is preferred) to use as a
     /// constant name, then calls self.const_type() and self.const_val() in order
