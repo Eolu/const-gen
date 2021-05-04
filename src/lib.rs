@@ -192,121 +192,39 @@ impl<E: CompileConst> CompileConst for HashSet<E>
 }
 
 // Implementation for various-sized tuples
-
-impl CompileConst for ()
+macro_rules! tuples
 {
-    fn const_type() -> String 
+    ($format:literal $(, $ty:ident $index:tt)*) => 
     {
-        "()".to_string()
-    }
-
-    fn const_val(&self) -> String 
-    {
-        "()".to_string()
+        // T: CompileConst, U: CompileConst
+        impl<$($ty: CompileConst),*> CompileConst for ($($ty),*)
+        {
+            fn const_type() -> String 
+            {
+                format!($format, $($ty::const_type()),*)
+            }
+        
+            fn const_val(&self) -> String 
+            {
+                format!($format, $(self.$index.const_val()),*)
+            }
+        }
     }
 }
 
-impl<T: CompileConst, U: CompileConst> CompileConst for (T, U)
-{
-    fn const_type() -> String 
-    {
-        format!("({}, {})", T::const_type(), U::const_type())
-    }
-
-    fn const_val(&self) -> String 
-    {
-        format!("({},{})", self.0.const_val(), self.1.const_val())
-    }
-}
-
-impl<T, U, V> CompileConst for (T, U, V)
-    where T: CompileConst, U: CompileConst, V: CompileConst
-{
-    fn const_type() -> String 
-    {
-        format!("({}, {}, {})", T::const_type(), U::const_type(), 
-            V::const_type())
-    }
-
-    fn const_val(&self) -> String 
-    {
-        format!("({},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val())
-    }
-}
-
-impl<T, U, V, W> CompileConst for (T, U, V, W)
-    where T: CompileConst, U: CompileConst, V: CompileConst,
-          W: CompileConst
-{
-    fn const_type() -> String 
-    {
-        format!("({}, {}, {}, {})", T::const_type(), U::const_type(), 
-            V::const_type(), W::const_type())
-    }
-
-    fn const_val(&self) -> String 
-    {
-        format!("({},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val())
-    }
-}
-
-impl<T, U, V, W, X> CompileConst for (T, U, V, W, X)
-    where T: CompileConst, U: CompileConst, V: CompileConst,
-          W: CompileConst, X: CompileConst
-{
-    fn const_type() -> String 
-    {
-        format!("({}, {}, {}, {}, {})", T::const_type(), U::const_type(), 
-            V::const_type(), W::const_type(), X::const_type())
-    }
-
-    fn const_val(&self) -> String 
-    {
-        format!("({},{},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val(), self.4.const_val())
-    }
-}
-
-impl<T, U, V, W, X, Y> CompileConst for (T, U, V, W, X, Y)
-    where T: CompileConst, U: CompileConst, V: CompileConst,
-          W: CompileConst, X: CompileConst, Y: CompileConst
-{
-    fn const_type() -> String 
-    {
-        format!("({}, {}, {}, {}, {}, {})", T::const_type(), U::const_type(), 
-            V::const_type(), W::const_type(), X::const_type(), Y::const_type())
-    }
-
-    fn const_val(&self) -> String 
-    {
-        format!("({},{},{},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val(), self.4.const_val(), 
-            self.5.const_val())
-    }
-}
-
-impl<T, U, V, W, X, Y, Z> CompileConst for (T, U, V, W, X, Y, Z)
-    where T: CompileConst, U: CompileConst, V: CompileConst,
-          W: CompileConst, X: CompileConst, Y: CompileConst, 
-          Z: CompileConst
-{
-    fn const_type() -> String 
-    {
-        format!("({}, {}, {}, {}, {}, {}, {})", T::const_type(), U::const_type(), 
-            V::const_type(), W::const_type(), X::const_type(), Y::const_type(), 
-            Z::const_type())
-    }
-
-    fn const_val(&self) -> String 
-    {
-        format!("({},{},{},{},{},{},{})", self.0.const_val(), 
-            self.1.const_val(), self.2.const_val(), 
-            self.3.const_val(), self.4.const_val(), 
-            self.5.const_val(), self.6.const_val())
-    }
-}
+tuples!("()");
+tuples!("({},{})", A 0, B 1);
+tuples!("({},{},{})", A 0, B 1, C 2);
+tuples!("({},{},{},{})", A 0, B 1, C 2, D 3);
+tuples!("({},{},{},{},{})", A 0, B 1, C 2, D 3, E 4);
+tuples!("({},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5);
+tuples!("({},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6);
+tuples!("({},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7);
+tuples!("({},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8);
+tuples!("({},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9);
+tuples!("({},{},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9, K 10);
+tuples!("({},{},{},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9, K 10, L 11);
+tuples!("({},{},{},{},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9, K 10, L 11, M 12);
+tuples!("({},{},{},{},{},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9, K 10, L 11, M 12, N 13);
+tuples!("({},{},{},{},{},{},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9, K 10, L 11, M 12, N 13, O 14);
+tuples!("({},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{})", A 0, B 1, C 2, D 3, E 4, F 5, G 6, H 7, I 8, J 9, K 10, L 11, M 12, N 13, O 14, P 15);
