@@ -185,3 +185,26 @@ fn test_vec()
         format!("const TEST_VEC: &'static [u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
     );
 }
+
+#[test]
+fn test_array()
+{
+    let arr: [u8; 0] = [];
+    assert_eq!
+    (
+        const_declaration!(TEST_ARR = arr),
+        format!("const TEST_ARR: [u8; 0] = [];")
+    );
+    let arr: [u8; 1] = [7];
+    assert_eq!
+    (
+        const_declaration!(TEST_ARR = arr),
+        format!("const TEST_ARR: [u8; 1] = [7u8];")
+    );
+    let arr: [u8; 9] = [1,2,3,4,5,6,7,8,9];
+    assert_eq!
+    (
+        const_declaration!(TEST_ARR = arr),
+        format!("const TEST_ARR: [u8; 9] = [1u8,2u8,3u8,4u8,5u8,6u8,7u8,8u8,9u8];")
+    );
+}
