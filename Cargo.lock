@@ -2,7 +2,7 @@
 # It is not intended for manual editing.
 [[package]]
 name = "const-gen"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "const-gen-derive",
 ]

@@ -151,6 +151,23 @@ derefs!
     std::sync::Arc<T>
 );
 
+impl<T: CompileConst> CompileConst for Option<T>
+{
+    fn const_type() -> String 
+    { 
+        format!("Option<{}>", T::const_type())
+    }
+
+    fn const_val(&self) -> String 
+    {
+        match self
+        {
+            Some(t) => format!("Some({})", t.const_val()),
+            None => String::from("None")
+        }
+    }
+}
+
 #[cfg(feature = "phf")]
 impl<K: CompileConst, V: CompileConst> CompileConst for HashMap<K,V>
 {
