@@ -178,6 +178,15 @@ The following table shows what types have implementations of the CompileConst tr
 |()|no conversion|
 |\<tuples with 2-16 variants\>|A tuple with the CompileConst representation of each variant|
 
+There is also a CompileConstArray trait which generates fixed-size arrays rather than static slices for the following
+|Type|Const Array Representation|
+--- | --- 
+|String, &str, str|[char; N]|
+|Vec\<T\>, &[T]|[T; N]|
+|Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConstArray representation|
+|()|no conversion|
+|\<tuples with 2-16 variants\>|A tuple with the CompileConstArray representation of each variant. Only supported if each variant implements CompileConstArray.|
+
 ## Limitations
 
 This crate will use the endianness, pointer widths, etc of the host machine rather than the target, unlike normal consts. It's still unclear if this caveat could be resolved with a reasonable amount of effort.

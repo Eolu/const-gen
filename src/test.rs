@@ -208,3 +208,47 @@ fn test_array()
         format!("const TEST_ARR: [u8; 9] = [1u8,2u8,3u8,4u8,5u8,6u8,7u8,8u8,9u8];")
     );
 }
+
+#[test]
+fn test_const_array_strings()
+{
+    let s: &str = "Hello";
+    assert_eq!
+    (
+        const_array_declaration!(TEST_CONST_STR = s),
+        format!("const TEST_CONST_STR: [char; 5] = ['H','e','l','l','o',];")
+    );
+}
+
+#[test]
+fn test_const_array_slices()
+{
+    let test_enum: &'static [TestEnum] = &[TestEnum::Variant1, TestEnum::Variant2(7), TestEnum::Variant1];
+    assert_eq!
+    (
+        const_array_declaration!(TEST_CONST_SLICE = test_enum),
+        format!("const TEST_CONST_SLICE: [TestEnum; 3] = [TestEnum::Variant1,TestEnum::Variant2(7u8,),TestEnum::Variant1];")
+    );
+}
+
+#[test]
+fn test_const_array_derefs()
+{
+    let test_enum: Box<&'static [TestEnum]> = Box::new(&[TestEnum::Variant1, TestEnum::Variant2(7), TestEnum::Variant1]);
+    assert_eq!
+    (
+        const_array_declaration!(TEST_CONST_SLICE = test_enum),
+        format!("const TEST_CONST_SLICE: [TestEnum; 3] = [TestEnum::Variant1,TestEnum::Variant2(7u8,),TestEnum::Variant1];")
+    );
+}
+
+#[test]
+fn test_const_array_tuples()
+{
+    let test_enum: (&'static [TestEnum], Vec<i8>) = (&[TestEnum::Variant2(0)], vec!(1,2,3));
+    assert_eq!
+    (
+        const_array_declaration!(TEST_CONST_TUP = test_enum),
+        format!("const TEST_CONST_TUP: ([TestEnum; 1],[i8; 3]) = ([TestEnum::Variant2(0u8,)],[1i8,2i8,3i8]);")
+    );
+}

@@ -21,6 +21,16 @@ macro_rules! const_definition
     }
 }
 
+/// Like const_definition, but for const array types
+#[macro_export]
+macro_rules! const_array_definition
+{
+    ($name:ident = $($val:tt)*) => 
+    {
+        $($val)*.const_array_definition(stringify!($name))
+    }
+}
+
 /// A macro to help in the creation of const declarations. Allows this syntax:
 /// `const_declaration!(VAR_NAME = value)`
 /// This is syntactic sugar for calling the `CompileConst::const_declaration`
@@ -31,6 +41,16 @@ macro_rules! const_declaration
     ($name:ident = $($val:tt)*) => 
     {
         $($val)*.const_declaration(stringify!($name))
+    }
+}
+
+/// Like const_declaration, but for const array types
+#[macro_export]
+macro_rules! const_array_declaration
+{
+    ($name:ident = $($val:tt)*) => 
+    {
+        $($val)*.const_array_declaration(stringify!($name))
     }
 }
 
@@ -62,6 +82,19 @@ pub trait CompileConst
     }
 }
 
+/// Trait which defines how an array-representable type should be represented as a const array
+pub trait CompileConstArray
+{
+    /// Like const_type, but for a fixed-size array.
+    fn const_array_type(&self) -> String;
+    /// Like const_val, but for a fixed-size array.
+    fn const_array_val(&self) -> String;
+    fn const_array_declaration(&self, name: &str) -> String 
+    {
+        format!("const {}: {} = {};", name, self.const_array_type(), self.const_array_val())
+    }
+}
+
 macro_rules! numerics
 {
     ( $($t:ty),* ) => 
@@ -86,7 +119,8 @@ macro_rules! strings
 {
     ( $($t:ty),* ) => 
     {
-        $(impl CompileConst for $t
+        $(
+        impl CompileConst for $t
         {
             fn const_type() -> String 
             { 
@@ -97,7 +131,20 @@ macro_rules! strings
             {
                 format!("\"{}\"", self)
             }
-        })*
+        }
+        impl CompileConstArray for $t
+        {
+            fn const_array_type(&self) -> String 
+            { 
+                format!("[char; {}]", self.chars().count())
+            }
+        
+            fn const_array_val(&self) -> String 
+            {
+                format!("[{}]", self.chars().map(|c| format!("'{}',", c)).collect::<Vec<String>>().concat())
+            }
+        }
+        )*
     }
 }
 strings!(String, &str, str);
@@ -106,7 +153,8 @@ macro_rules! slices
 {
     ( $($t:ty),* ) => 
     {
-        $(impl<T: CompileConst> CompileConst for $t
+        $(
+        impl<T: CompileConst> CompileConst for $t
         {
             fn const_type() -> String 
             { 
@@ -121,7 +169,24 @@ macro_rules! slices
                     .collect::<Vec<String>>()
                     .join(","))
             }
-        })*
+        }
+        impl<T: CompileConst> CompileConstArray for $t
+        {
+            fn const_array_type(&self) -> String 
+            {
+                format!("[{}; {}]", T::const_type(), self.iter().count())
+            }
+        
+            fn const_array_val(&self) -> String 
+            {
+                format!("[{}]", self
+                    .into_iter()
+                    .map(|e| e.const_val())
+                    .collect::<Vec<String>>()
+                    .join(","))
+            }
+        }
+        )*
     }
 }
 slices!(Vec<T>, &[T]);
@@ -130,7 +195,8 @@ macro_rules! derefs
 {
     ( $($t:ty $(=> $bound:tt)?),* ) => 
     {
-        $(impl<T: CompileConst $(+ $bound)? > CompileConst for $t
+        $(
+        impl<T: CompileConst $(+ $bound)? > CompileConst for $t
         {
             fn const_type() -> String 
             { 
@@ -140,7 +206,20 @@ macro_rules! derefs
             {
                 (**self).const_val()
             }
-        })*
+        }
+        impl<T: CompileConstArray $(+ $bound)? > CompileConstArray for $t
+        {
+            fn const_array_type(&self) -> String 
+            {
+                (**self).const_array_type()
+            }
+        
+            fn const_array_val(&self) -> String 
+            {
+                (**self).const_array_val()
+            }
+        }
+        )*
     }
 }
 derefs!
@@ -245,7 +324,6 @@ macro_rules! tuples
 {
     ($format:literal $(, $ty:ident $index:tt)*) => 
     {
-        // T: CompileConst, U: CompileConst
         impl<$($ty: CompileConst),*> CompileConst for ($($ty),*)
         {
             fn const_type() -> String 
@@ -256,6 +334,19 @@ macro_rules! tuples
             fn const_val(&self) -> String 
             {
                 format!($format, $(self.$index.const_val()),*)
+            }
+        }
+
+        impl<$($ty: CompileConstArray),*> CompileConstArray for ($($ty),*)
+        {
+            fn const_array_type(&self) -> String 
+            {
+                format!($format, $(self.$index.const_array_type()),*)
+            }
+        
+            fn const_array_val(&self) -> String 
+            {
+                format!($format, $(self.$index.const_array_val()),*)
             }
         }
     }

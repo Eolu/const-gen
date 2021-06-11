@@ -1,3 +1,6 @@
+# 0.3
+- Added const array generation with a trait.
+
 # 0.2.5
 - Added `const_definition!` and `const_declaration!` macros to simplify creation of constants.
 
