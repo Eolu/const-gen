@@ -24,4 +24,4 @@ phf = []
 derive = ["const-gen-derive"]
 
 [dependencies]
-const-gen-derive = { version = "0.2", optional = true }
+const-gen-derive = { version = "0.2.2", optional = true }
