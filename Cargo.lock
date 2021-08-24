@@ -4,16 +4,16 @@ version = 3
 
 [[package]]
 name = "const-gen"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "const-gen-derive",
 ]
 
 [[package]]
 name = "const-gen-derive"
-version = "0.2.2"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c32842ba59f3ed6b5307cdfc0b815215d266abc93de48b674aa178bd4f1740cb"
+checksum = "7ed46321c257fee2e57a6b23b7852c60a3f20e16db9f2b275a7e3c59121862ef"
 dependencies = [
  "proc-macro2",
  "quote",

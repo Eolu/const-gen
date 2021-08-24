@@ -1,3 +1,7 @@
+# 0.4
+- Added support for visability modifiers.
+- Removed a useless macro.
+
 # 0.3
 - Added const array generation with a trait.
 

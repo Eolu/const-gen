@@ -9,25 +9,15 @@ pub use const_gen_derive::*;
 mod test;
 
 /// A macro to help in the creation of const definitions. Allows this syntax:
-/// `const_definition!(#[attribute1] #[attributeN] TypeName)`
+/// `const_definition!(#[attribute1] #[attributeN] visibility TypeName)`
 /// This is syntactic sugar for calling the `CompileConst::const_definition`
 /// function.
 #[macro_export]
 macro_rules! const_definition
 {
-    ( $(#[$attr:meta])* $ty:ty) => 
+    ( $(#[$attr:meta])* $vis:vis $ty:ty) => 
     {
-        <$ty>::const_definition(stringify!($(#[$attr])*))
-    }
-}
-
-/// Like const_definition, but for const array types
-#[macro_export]
-macro_rules! const_array_definition
-{
-    ($name:ident = $($val:tt)*) => 
-    {
-        $($val)*.const_array_definition(stringify!($name))
+        <$ty>::const_definition(stringify!($(#[$attr])*), stringify!($vis))
     }
 }
 
@@ -38,9 +28,9 @@ macro_rules! const_array_definition
 #[macro_export]
 macro_rules! const_declaration
 {
-    ($name:ident = $($val:tt)*) => 
+    ($vis:vis $name:ident = $($val:tt)*) => 
     {
-        $($val)*.const_declaration(stringify!($name))
+        $($val)*.const_declaration(stringify!($vis), stringify!($name))
     }
 }
 
@@ -48,9 +38,9 @@ macro_rules! const_declaration
 #[macro_export]
 macro_rules! const_array_declaration
 {
-    ($name:ident = $($val:tt)*) => 
+    ($vis:vis $name:ident = $($val:tt)*) => 
     {
-        $($val)*.const_array_declaration(stringify!($name))
+        $($val)*.const_array_declaration(stringify!($vis), stringify!($name))
     }
 }
 
@@ -67,16 +57,26 @@ pub trait CompileConst
     /// Takes a string (a SCREAMING_SNAKE_CASE string is preferred) to use as a
     /// constant name, then calls self.const_type() and self.const_val() in order
     /// to generate a Rust compile-time constant declaration statement.
-    fn const_declaration(&self, name: &str) -> String 
+    fn const_declaration(&self, vis: &str, name: &str) -> String 
     {
-        format!("const {}: {} = {};", name, Self::const_type(), self.const_val())
+        format!
+        (
+            "{}{}const {}: {} = {};", 
+            vis, 
+            if vis.is_empty() { "" } else { " " },
+            name, 
+            Self::const_type(), 
+            self.const_val()
+        )
     }
     /// Return a const definition for this type. Attributes may be included, and 
     /// must be formatted as the compiler would expect to see them (including
     /// the pound sign and square brackets `"#[...]"`). Always returns an empty 
     /// string for types defined in the standard library. Typically this is
-    /// easier to call instead through the const_definition! macro.
-    fn const_definition(_attrs: &str) -> String
+    /// easier to call instead through the const_definition! macro. Visibility
+    /// modifiers (eg, pub(...)) may be used, or an empty string passed in to
+    /// generate a private item.
+    fn const_definition(_attrs: &str, _vis: &str) -> String
     {
         String::new()
     }
@@ -89,9 +89,17 @@ pub trait CompileConstArray
     fn const_array_type(&self) -> String;
     /// Like const_val, but for a fixed-size array.
     fn const_array_val(&self) -> String;
-    fn const_array_declaration(&self, name: &str) -> String 
+    fn const_array_declaration(&self, vis: &str, name: &str) -> String 
     {
-        format!("const {}: {} = {};", name, self.const_array_type(), self.const_array_val())
+        format!
+        (
+            "{}{}const {}: {} = {};", 
+            vis, 
+            if vis.is_empty() { "" } else { " " }, 
+            name, 
+            self.const_array_type(), 
+            self.const_array_val()
+        )
     }
 }
 

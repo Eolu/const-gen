@@ -58,7 +58,7 @@ fn main()
         // Here are type definitions for our enums and structs 
         // above. Attributes from build.rs will not be preserved, 
         // so we need to pass any we want in.
-        const_definition!(#[derive(Debug)] TestStruct),
+        const_definition!(#[derive(Debug)] pub TestStruct),
         const_definition!(#[derive(Debug)] TestTup),
         const_definition!(#[derive(Debug)] TestEnum),
 
@@ -70,7 +70,7 @@ fn main()
         const_declaration!(TEST_STRING = "I'm a string!"),
         const_declaration!(TEST_COW = 
             std::borrow::Cow::from("Cow!")),
-        const_declaration!(TEST_STRUCT = test_struct),
+        const_declaration!(pub TEST_STRUCT = test_struct),
         const_declaration!(TEST_TUP_STRUCT = test_tup_struct),
         const_declaration!(TEST_ENUM = test_enum),
         const_declaration!(TEST_ENUM_TUP = test_enum_tup),
