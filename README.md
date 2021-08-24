@@ -189,7 +189,7 @@ There is also a CompileConstArray trait which generates fixed-size arrays rather
 
 ## Limitations
 
-This crate will use the endianness, pointer widths, etc of the host machine rather than the target, unlike normal consts. It's still unclear if this caveat could be resolved with a reasonable amount of effort.
+This crate will use the endianness, pointer widths, etc of the host machine rather than the target. Eg, doing things like calling `to_ne_bytes` on an integer and storing the results in a const will result in a byte representation that may not be equivalent to that same integer on the target machine.
 
 ## Features
 
