@@ -22,7 +22,7 @@ macro_rules! const_definition
 }
 
 /// A macro to help in the creation of const declarations. Allows this syntax:
-/// `const_declaration!(VAR_NAME = value)`
+/// `const_declaration!(visibility VAR_NAME = value)`
 /// This is syntactic sugar for calling the `CompileConst::const_declaration`
 /// function.
 #[macro_export]
@@ -54,9 +54,10 @@ pub trait CompileConst
     fn const_type() -> String;
     /// Get a string representation of the current value in constant form.
     fn const_val(&self) -> String;
-    /// Takes a string (a SCREAMING_SNAKE_CASE string is preferred) to use as a
-    /// constant name, then calls self.const_type() and self.const_val() in order
-    /// to generate a Rust compile-time constant declaration statement.
+    /// Takes 2 strings: a visibility (eg pub) and a name (a SCREAMING_SNAKE_CASE 
+    /// string is preferred) to use as a constant name, then calls 
+    /// self.const_type() and self.const_val() in order to generate a Rust 
+    /// compile-time constant declaration statement.
     fn const_declaration(&self, vis: &str, name: &str) -> String 
     {
         format!
@@ -89,6 +90,7 @@ pub trait CompileConstArray
     fn const_array_type(&self) -> String;
     /// Like const_val, but for a fixed-size array.
     fn const_array_val(&self) -> String;
+    /// Like const_declaration, but for a fixed-size array.
     fn const_array_declaration(&self, vis: &str, name: &str) -> String 
     {
         format!
