@@ -170,7 +170,7 @@ The following table shows what types have implementations of the CompileConst tr
 |\<all numeric primitives\>|no conversion|
 |String, &str, str|&'static str|
 |Vec\<T\>, &[T]|&'static [T]|
-|[T; N where N is 0-99]|[T's CompileConst representation; N]|
+|[T; N where N is 0-256]|[T's CompileConst representation; N]|
 |Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConst representation|
 |Option\<T\>|Option\<T's CompileConst representation\>|
 |HashMap<K,V>|phf::Map\<K, V\>, with K and V's CompileConst representation|
