@@ -3,7 +3,7 @@
 This is a crate for generating compile-time constants in your `build.rs` file. This crate supports converting types that are typically heap-allocated into fixed-size constants. It includes support for primitives, strings, vectors, maps, sets, and comes with a derive macro to allow implementation with structs and enums.
 
 See this example:
-```rust
+```rust,ignore
 // build.rs
 
 use const_gen::*;
@@ -102,7 +102,7 @@ fn main()
 
 Now, in our `main.rs` file we can do something like this:
 
-```rust
+```rust,ignore
 
 // Include our constants
 include!(concat!(env!("OUT_DIR"), "/const_gen.rs"));

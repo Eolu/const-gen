@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 #[cfg(feature = "phf")]
 use std::collections::HashMap;
 use std::collections::HashSet;
