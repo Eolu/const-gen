@@ -125,7 +125,7 @@ fn main()
 ```
 
 The actual generated output looks like (an unformatted version of) this:
-```rust
+```rust,ignore
 #[derive(Debug)]
 struct TestStruct 
 {
