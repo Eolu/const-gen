@@ -200,3 +200,7 @@ The `phf` feature implements the CompileConst trait for HashMaps and HashSets. I
 
 ### derive
 The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The requirement is that all members implement `CompileConst` as well.
+
+## Why?
+
+While I've run into quite a few uses for a crate like this in my projects, one of my favorite is the ability to maintain some kind of parameter or configuration file at build-time that gets represented as constants at runtime. Including something like `println!("cargo:rerun-if-changed=system_parameters.csv");` in your build.rs script will result in any modifications of the constants defined in `system_parameters.csv` to be quickly repesented in your codebase through rust-analyzer. In many cases, this is desirable over hiding constants in various files throughout your code.
