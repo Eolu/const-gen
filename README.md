@@ -179,10 +179,11 @@ The following table shows what types have implementations of the CompileConst tr
 |\<tuples with 2-16 variants\>|A tuple with the CompileConst representation of each variant|
 
 There is also a CompileConstArray trait which generates fixed-size arrays rather than static slices for the following
+
 |Type|Const Array Representation|
 --- | --- 
-|String, &str, str|[char; N]|
 |Vec\<T\>, &[T]|[T; N]|
+|String, &str, str|[char; N]|
 |Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConstArray representation|
 |()|no conversion|
 |\<tuples with 2-16 variants\>|A tuple with the CompileConstArray representation of each variant. Only supported if each variant implements CompileConstArray.|
@@ -203,4 +204,4 @@ The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The r
 
 ## Why?
 
-While I've run into quite a few uses for a crate like this in my projects, one of my favorite is the ability to maintain some kind of parameter or configuration file at build-time that gets represented as constants at runtime. Including something like `println!("cargo:rerun-if-changed=system_parameters.csv");` in your build.rs script will result in any modifications of the constants defined in `system_parameters.csv` to be quickly repesented in your codebase through rust-analyzer. In many cases, this is desirable over hiding constants in various files throughout your code.
+While I've run into quite a few uses for a crate like this in my projects, one of my favorite is the ability to maintain some kind of parameter or configuration file at build-time that gets represented as constants at compile-time. Including something like `println!("cargo:rerun-if-changed=system_parameters.csv");` in your build.rs script will result in any modifications of the constants defined in `system_parameters.csv` to be quickly repesented in your codebase through rust-analyzer. In many cases, this is desirable over hiding constants in various files throughout your code.
