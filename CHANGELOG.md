@@ -1,3 +1,6 @@
+# 1.1.0
+- Implemented CompileConst for bool.
+
 # 1.0
 - No significant changes, but enough testing has been done to prove this works. Going 1.0 to signify that.
 

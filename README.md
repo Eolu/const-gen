@@ -168,6 +168,7 @@ The following table shows what types have implementations of the CompileConst tr
 |Type|Const Representation|
 --- | --- 
 |\<all numeric primitives\>|no conversion|
+|bool|no conversion|
 |String, &str, str|&'static str|
 |Vec\<T\>, &[T]|&'static [T]|
 |[T; N where N is 0-256]|[T's CompileConst representation; N]|

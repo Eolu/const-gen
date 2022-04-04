@@ -242,6 +242,19 @@ derefs!
     std::sync::Arc<T>
 );
 
+impl CompileConst for bool
+{
+    fn const_type() -> String 
+    { 
+        "bool".to_owned()
+    }
+
+    fn const_val(&self) -> String 
+    {
+        if *self { "true" } else { "false" }.to_owned()
+    }
+}
+
 impl<T: CompileConst> CompileConst for Option<T>
 {
     fn const_type() -> String 
