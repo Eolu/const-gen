@@ -1,3 +1,6 @@
+# 1.2.0
+- Fixed a bug which prevented struct fields from inheriting visibility modifiers.
+
 # 1.1.0
 - Implemented CompileConst for bool.
 
