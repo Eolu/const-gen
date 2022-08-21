@@ -1,3 +1,7 @@
+# 1.3.0
+- Added #[inherit_docs] attribute that can be added to anything with "#[derive(CompileConst)]"
+- Added the ability to generate attributes for declarations, meaning it's now possible to add rustdocs to generated items.
+
 # 1.2.0
 - Fixed a bug which prevented struct fields from inheriting visibility modifiers.
 

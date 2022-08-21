@@ -30,9 +30,9 @@ macro_rules! const_definition
 #[macro_export]
 macro_rules! const_declaration
 {
-    ($vis:vis $name:ident = $($val:tt)*) => 
+    ( $(#[$attr:meta])* $vis:vis $name:ident = $($val:tt)*) => 
     {
-        $($val)*.const_declaration(stringify!($vis), stringify!($name))
+        $($val)*.const_declaration(stringify!($(#[$attr])*), stringify!($vis), stringify!($name))
     }
 }
 
@@ -40,9 +40,9 @@ macro_rules! const_declaration
 #[macro_export]
 macro_rules! const_array_declaration
 {
-    ($vis:vis $name:ident = $($val:tt)*) => 
+    ( $(#[$attr:meta])* $vis:vis $name:ident = $($val:tt)*) => 
     {
-        $($val)*.const_array_declaration(stringify!($vis), stringify!($name))
+        $($val)*.const_array_declaration(stringify!($(#[$attr])*), stringify!($vis), stringify!($name))
     }
 }
 
@@ -56,15 +56,17 @@ pub trait CompileConst
     fn const_type() -> String;
     /// Get a string representation of the current value in constant form.
     fn const_val(&self) -> String;
-    /// Takes 2 strings: a visibility (eg pub) and a name (a SCREAMING_SNAKE_CASE 
-    /// string is preferred) to use as a constant name, then calls 
-    /// self.const_type() and self.const_val() in order to generate a Rust 
-    /// compile-time constant declaration statement.
-    fn const_declaration(&self, vis: &str, name: &str) -> String 
+    /// Takes 3 strings: Attrbibutes, a visibility (eg pub) and a name 
+    /// (a SCREAMING_SNAKE_CASE string is preferred) to use as a constant name,
+    /// then calls self.const_type() and self.const_val() in order to generate a
+    /// Rust compile-time constant declaration statement.
+    fn const_declaration(&self, attrs: &str, vis: &str, name: &str) -> String 
     {
         format!
         (
-            "{}{}const {}: {} = {};", 
+            "{}{}{}{}const {}: {} = {};", 
+            if attrs.is_empty() { "" } else { attrs },
+            if attrs.is_empty() { "" } else { " " },
             vis, 
             if vis.is_empty() { "" } else { " " },
             name, 
@@ -93,11 +95,13 @@ pub trait CompileConstArray
     /// Like const_val, but for a fixed-size array.
     fn const_array_val(&self) -> String;
     /// Like const_declaration, but for a fixed-size array.
-    fn const_array_declaration(&self, vis: &str, name: &str) -> String 
+    fn const_array_declaration(&self, attrs: &str, vis: &str, name: &str) -> String 
     {
         format!
         (
-            "{}{}const {}: {} = {};", 
+            "{}{}{}{}const {}: {} = {};", 
+            if attrs.is_empty() { "" } else { attrs },
+            if attrs.is_empty() { "" } else { " " },
             vis, 
             if vis.is_empty() { "" } else { " " }, 
             name, 

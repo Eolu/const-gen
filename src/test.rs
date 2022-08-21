@@ -107,8 +107,8 @@ fn test_strings()
 {
     assert_eq!
     (
-        const_declaration!(pub(in crate) TEST_STR = "I'm a string!"),
-        format!("pub(in crate)  const TEST_STR: &'static str = \"I'm a string!\";")
+        const_declaration!(pub(crate) TEST_STR = "I'm a string!"),
+        format!("pub(crate)  const TEST_STR: &'static str = \"I'm a string!\";")
     );
     assert_eq!
     (
@@ -129,7 +129,7 @@ fn test_nums()
     {
         assert_eq!
         (
-            val.const_declaration("pub", var_name), 
+            val.const_declaration("", "pub", var_name), 
             format!("pub const {0}: {1} = {2}{1};", var_name, type_name, val)
         );
     }

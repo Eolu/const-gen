@@ -24,6 +24,8 @@ struct TestStruct
 struct TestTup(u8, u16);
 
 #[derive(CompileConst)]
+#[inherit_docs]
+/// Example inherited documentation
 enum TestEnum
 {
     Variant1,
@@ -65,7 +67,7 @@ fn main()
         // And here are constant definitions for particular 
         // values.
         const_declaration!(TEST_U8 = 27u8),
-        const_declaration!(TEST_F32 = 33.5f32),
+        const_declaration!(#[doc = "/// Example inherited documentation"] TEST_F32 = 33.5f32),
         const_declaration!(TEST_VEC = test_vec),
         const_declaration!(TEST_STRING = "I'm a string!"),
         const_declaration!(TEST_COW = 
@@ -135,6 +137,7 @@ struct TestStruct
 #[derive(Debug)]
 struct TestTup(u8, u16);
 #[derive(Debug)]
+/// Example inherited documentation
 enum TestEnum 
 {
     Variant1,
@@ -142,6 +145,7 @@ enum TestEnum
     Variant3 { named: u8 },
 }
 const TEST_U8: u8 = 27u8;
+/// Example inherited documentation
 const TEST_F32: f32 = 33.5f32;
 const TEST_VEC: &'static [u8] = 
     &[1u8, 2u8, 3u8, 4u8, 5u8, 10u8, 4u8];
@@ -189,6 +193,8 @@ There is also a CompileConstArray trait which generates fixed-size arrays rather
 |()|no conversion|
 |\<tuples with 2-16 variants\>|A tuple with the CompileConstArray representation of each variant. Only supported if each variant implements CompileConstArray.|
 
+## Docs
+
 ## Limitations
 
 This crate will use the endianness, pointer widths, etc of the host machine rather than the target. Eg, doing things like calling `to_ne_bytes` on an integer and storing the results in a const will result in a byte representation that may not be equivalent to that same integer on the target machine.
@@ -201,8 +207,4 @@ At the current time, all features are default.
 The `phf` feature implements the CompileConst trait for HashMaps and HashSets. It will generate a `phf::Map` for HashMap types and a `phf::Set` for HashSet types. Note that `phf` does NOT need to be included in your build dependencies, but it ought to be included in your runtime dependencies in order to use the constants.
 
 ### derive
-The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The requirement is that all members implement `CompileConst` as well.
-
-## Why?
-
-While I've run into quite a few uses for a crate like this in my projects, one of my favorite is the ability to maintain some kind of parameter or configuration file at build-time that gets represented as constants at compile-time. Including something like `println!("cargo:rerun-if-changed=system_parameters.csv");` in your build.rs script will result in any modifications of the constants defined in `system_parameters.csv` to be quickly repesented in your codebase through rust-analyzer. In many cases, this is desirable over hiding constants in various files throughout your code.
+The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The requirement is that all members implement `CompileConst` as well. The #[inherit_docs] attribute may be added to cause generated definition to inherit rustdocs. 
