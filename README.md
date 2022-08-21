@@ -193,8 +193,6 @@ There is also a CompileConstArray trait which generates fixed-size arrays rather
 |()|no conversion|
 |\<tuples with 2-16 variants\>|A tuple with the CompileConstArray representation of each variant. Only supported if each variant implements CompileConstArray.|
 
-## Docs
-
 ## Limitations
 
 This crate will use the endianness, pointer widths, etc of the host machine rather than the target. Eg, doing things like calling `to_ne_bytes` on an integer and storing the results in a const will result in a byte representation that may not be equivalent to that same integer on the target machine.
