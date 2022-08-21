@@ -24,7 +24,7 @@ struct TestStruct
 struct TestTup(u8, u16);
 
 #[derive(CompileConst)]
-#[inherit_docs]
+#[inherit_doc]
 /// Example inherited documentation
 enum TestEnum
 {
@@ -67,7 +67,7 @@ fn main()
         // And here are constant definitions for particular 
         // values.
         const_declaration!(TEST_U8 = 27u8),
-        const_declaration!(#[doc = "/// Example inherited documentation"] TEST_F32 = 33.5f32),
+        const_declaration!(#[doc = "Example inherited documentation"] TEST_F32 = 33.5f32),
         const_declaration!(TEST_VEC = test_vec),
         const_declaration!(TEST_STRING = "I'm a string!"),
         const_declaration!(TEST_COW = 
