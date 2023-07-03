@@ -19,8 +19,9 @@ name = "const_gen"
 path = "src/lib.rs"
 
 [features]
-default = ["derive", "phf"]
-phf = []
+default = ["std", "derive", "phf"]
+std = []
+phf = ["std"]
 derive = ["const-gen-derive"]
 
 [dependencies]
