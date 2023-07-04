@@ -1,3 +1,6 @@
+# 1.4.0 
+- Added no_std support, enabled by disabled the `std` default feature.
+
 # 1.3.0
 - Added #[inherit_docs] attribute that can be added to anything with "#[derive(CompileConst)]"
 - Added the ability to generate attributes for declarations, meaning it's now possible to add rustdocs to generated items.

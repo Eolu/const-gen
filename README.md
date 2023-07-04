@@ -96,8 +96,6 @@ fn main()
 
     // Lastly, output to the destination file.
     fs::write(&dest_path, const_declarations).unwrap();
-
-    println!("cargo:rerun-if-changed=build.rs");
 }
 
 ```
