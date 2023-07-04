@@ -206,3 +206,7 @@ The `phf` feature implements the CompileConst trait for HashMaps and HashSets. I
 
 ### derive
 The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The requirement is that all members implement `CompileConst` as well. The #[inherit_docs] attribute may be added to cause generated definition to inherit rustdocs. 
+
+
+### std
+The `std` default feature can be disabled to use the `alloc` crate in place of `std` constructs.
