@@ -41,6 +41,19 @@ macro_rules! const_declaration
     }
 }
 
+/// A macro to help in the creation of static declarations. Allows this syntax:
+/// `static_declaration!(visibility VAR_NAME = value)`
+/// This is syntactic sugar for calling the `CompileConst::static_declaration`
+/// function.
+#[macro_export]
+macro_rules! static_declaration
+{
+    ( $(#[$attr:meta])* $vis:vis $name:ident = $($val:tt)*) =>
+    {
+        $($val)*.static_declaration(stringify!($(#[$attr])*), stringify!($vis), stringify!($name))
+    }
+}
+
 /// Like const_declaration, but for const array types
 #[macro_export]
 macro_rules! const_array_declaration
@@ -48,6 +61,16 @@ macro_rules! const_array_declaration
     ( $(#[$attr:meta])* $vis:vis $name:ident = $($val:tt)*) =>
     {
         $($val)*.const_array_declaration(stringify!($(#[$attr])*), stringify!($vis), stringify!($name))
+    }
+}
+
+/// Like static_declaration, but for const array types
+#[macro_export]
+macro_rules! static_array_declaration
+{
+    ( $(#[$attr:meta])* $vis:vis $name:ident = $($val:tt)*) =>
+    {
+        $($val)*.static_array_declaration(stringify!($(#[$attr])*), stringify!($vis), stringify!($name))
     }
 }
 
@@ -67,6 +90,22 @@ pub trait CompileConst {
     fn const_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
         format!(
             "{}{}{}{}const {}: {} = {};",
+            if attrs.is_empty() { "" } else { attrs },
+            if attrs.is_empty() { "" } else { " " },
+            vis,
+            if vis.is_empty() { "" } else { " " },
+            name,
+            Self::const_type(),
+            self.const_val()
+        )
+    }
+    /// Takes 3 strings: Attrbibutes, a visibility (eg pub) and a name
+    /// (a SCREAMING_SNAKE_CASE string is preferred) to use as the static's name,
+    /// then calls self.const_type() and self.const_val() in order to generate a
+    /// Rust compile-time static declaration statement.
+    fn static_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
+        format!(
+            "{}{}{}{}static {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
             if attrs.is_empty() { "" } else { " " },
             vis,
@@ -98,6 +137,19 @@ pub trait CompileConstArray {
     fn const_array_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
         format!(
             "{}{}{}{}const {}: {} = {};",
+            if attrs.is_empty() { "" } else { attrs },
+            if attrs.is_empty() { "" } else { " " },
+            vis,
+            if vis.is_empty() { "" } else { " " },
+            name,
+            self.const_array_type(),
+            self.const_array_val()
+        )
+    }
+    /// Like static_declaration, but for a fixed-size array.
+    fn static_array_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
+        format!(
+            "{}{}{}{}static {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
             if attrs.is_empty() { "" } else { " " },
             vis,

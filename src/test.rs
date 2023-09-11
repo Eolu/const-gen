@@ -23,12 +23,17 @@ fn test_struct()
     assert_eq!
     (
         const_definition!(#[derive(Debug)] TestStruct), 
-        format!("#[derive(Debug)] struct TestStruct{{ test_u8: u8, test_vec: &\'static [&\'static str], }}")
+        format!("#[derive(Debug)] struct TestStruct{{  test_u8: u8,  test_vec: &\'static [&\'static str], }}")
     );
     assert_eq!
     (
         const_declaration!(TEST_STRUCT = test_struct),
         format!("const TEST_STRUCT: TestStruct = TestStruct {{ test_u8: 21u8, test_vec: &[\"Hello there.\"], }};")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_STRUCT_STATIC = test_struct),
+        format!("static TEST_STRUCT_STATIC: TestStruct = TestStruct {{ test_u8: 21u8, test_vec: &[\"Hello there.\"], }};")
     );
 }
 
@@ -38,7 +43,7 @@ fn test_struct_definition()
     assert_eq!
     (
         const_definition!(#[derive(Debug)] TestStruct), 
-        format!("#[derive(Debug)] struct TestStruct{{ test_u8: u8, test_vec: &\'static [&\'static str], }}")
+        format!("#[derive(Debug)] struct TestStruct{{  test_u8: u8,  test_vec: &\'static [&\'static str], }}")
     );
 }
 
@@ -57,6 +62,11 @@ fn test_tup_struct()
     (
         const_declaration!(TEST_TUP_STRUCT = test_tup_struct),
         format!("const TEST_TUP_STRUCT: TestTup = TestTup(4u8,55u16,);")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_TUP_STRUCT_STATIC = test_tup_struct),
+        format!("static TEST_TUP_STRUCT_STATIC: TestTup = TestTup(4u8,55u16,);")
     );
 }
 
@@ -86,6 +96,11 @@ fn test_enum()
         const_declaration!(TEST_ENUM = test_enum),
         format!("const TEST_ENUM: TestEnum = TestEnum::Variant1;")
     );
+    assert_eq!
+    (
+        static_declaration!(TEST_ENUM_STATIC = test_enum),
+        format!("static TEST_ENUM_STATIC: TestEnum = TestEnum::Variant1;")
+    );
 
     let test_enum = TestEnum::Variant2(22);
     assert_eq!
@@ -93,12 +108,22 @@ fn test_enum()
         const_declaration!(TEST_ENUM = test_enum),
         format!("const TEST_ENUM: TestEnum = TestEnum::Variant2(22u8,);")
     );
+    assert_eq!
+    (
+        static_declaration!(TEST_ENUM_STATIC = test_enum),
+        format!("static TEST_ENUM_STATIC: TestEnum = TestEnum::Variant2(22u8,);")
+    );
 
     let test_enum = TestEnum::Variant3 { named: 0 };
     assert_eq!
     (
         const_declaration!(TEST_ENUM = test_enum),
         format!("const TEST_ENUM: TestEnum = TestEnum::Variant3{{named:0u8,}};")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_ENUM_STATIC = test_enum),
+        format!("static TEST_ENUM_STATIC: TestEnum = TestEnum::Variant3{{named:0u8,}};")
     );
 }
 
@@ -120,7 +145,26 @@ fn test_strings()
         const_declaration!(TEST_COW = std::borrow::Cow::from("I'm a string!")),
         format!("const TEST_COW: &'static str = \"I'm a string!\";")
     );
+
+    // statics
+    assert_eq!
+    (
+        static_declaration!(pub(crate) TEST_STR = "I'm a string!"),
+        format!("pub(crate)  static TEST_STR: &'static str = \"I'm a string!\";")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_STRING = String::from("I'm a string!")),
+        format!("static TEST_STRING: &'static str = \"I'm a string!\";")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_COW = std::borrow::Cow::from("I'm a string!")),
+        format!("static TEST_COW: &'static str = \"I'm a string!\";")
+    );
 }
+
+
 
 #[test]
 fn test_nums() 
@@ -131,6 +175,11 @@ fn test_nums()
         (
             val.const_declaration("", "pub", var_name), 
             format!("pub const {0}: {1} = {2}{1};", var_name, type_name, val)
+        );
+        assert_eq!
+        (
+            val.static_declaration("", "pub", var_name),
+            format!("pub static {0}: {1} = {2}{1};", var_name, type_name, val)
         );
     }
     test("TEST_U8", "u8", u8::MAX);
@@ -160,6 +209,11 @@ fn test_map()
         const_declaration!(TEST_MAP = test_map),
         format!("const TEST_MAP: phf::Map<&\'static str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
     );
+    assert_eq!
+    (
+        static_declaration!(TEST_MAP = test_map),
+        format!("static TEST_MAP: phf::Map<&\'static str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
+    );
 }
 
 #[cfg(feature = "phf")]
@@ -173,6 +227,11 @@ fn test_set()
         const_declaration!(TEST_SET = test_set),
         format!("const TEST_SET: phf::Set<i32> = phf::phf_set!{{34i32}};")
     );
+    assert_eq!
+    (
+        static_declaration!(TEST_SET = test_set),
+        format!("static TEST_SET: phf::Set<i32> = phf::phf_set!{{34i32}};")
+    );
 }
 
 #[test]
@@ -183,6 +242,11 @@ fn test_vec()
     (
         const_declaration!(TEST_VEC = test_vec),
         format!("const TEST_VEC: &'static [u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_VEC = test_vec),
+        format!("static TEST_VEC: &'static [u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
     );
 }
 
@@ -195,17 +259,32 @@ fn test_array()
         const_declaration!(TEST_ARR = arr),
         format!("const TEST_ARR: [u8; 0] = [];")
     );
+    assert_eq!
+    (
+        static_declaration!(TEST_ARR = arr),
+        format!("static TEST_ARR: [u8; 0] = [];")
+    );
     let arr: [u8; 1] = [7];
     assert_eq!
     (
         const_declaration!(TEST_ARR = arr),
         format!("const TEST_ARR: [u8; 1] = [7u8];")
     );
+    assert_eq!
+    (
+        static_declaration!(TEST_ARR = arr),
+        format!("static TEST_ARR: [u8; 1] = [7u8];")
+    );
     let arr: [u8; 9] = [1,2,3,4,5,6,7,8,9];
     assert_eq!
     (
         const_declaration!(TEST_ARR = arr),
         format!("const TEST_ARR: [u8; 9] = [1u8,2u8,3u8,4u8,5u8,6u8,7u8,8u8,9u8];")
+    );
+    assert_eq!
+    (
+        static_declaration!(TEST_ARR = arr),
+        format!("static TEST_ARR: [u8; 9] = [1u8,2u8,3u8,4u8,5u8,6u8,7u8,8u8,9u8];")
     );
 }
 
@@ -218,6 +297,11 @@ fn test_const_array_strings()
         const_array_declaration!(TEST_CONST_STR = s),
         format!("const TEST_CONST_STR: [char; 5] = ['H','e','l','l','o',];")
     );
+    assert_eq!
+    (
+        static_array_declaration!(TEST_CONST_STR = s),
+        format!("static TEST_CONST_STR: [char; 5] = ['H','e','l','l','o',];")
+    );
 }
 
 #[test]
@@ -228,6 +312,11 @@ fn test_const_array_slices()
     (
         const_array_declaration!(TEST_CONST_SLICE = test_enum),
         format!("const TEST_CONST_SLICE: [TestEnum; 3] = [TestEnum::Variant1,TestEnum::Variant2(7u8,),TestEnum::Variant1];")
+    );
+    assert_eq!
+    (
+        static_array_declaration!(TEST_CONST_SLICE = test_enum),
+        format!("static TEST_CONST_SLICE: [TestEnum; 3] = [TestEnum::Variant1,TestEnum::Variant2(7u8,),TestEnum::Variant1];")
     );
 }
 
@@ -240,6 +329,11 @@ fn test_const_array_derefs()
         const_array_declaration!(TEST_CONST_SLICE = test_enum),
         format!("const TEST_CONST_SLICE: [TestEnum; 3] = [TestEnum::Variant1,TestEnum::Variant2(7u8,),TestEnum::Variant1];")
     );
+    assert_eq!
+    (
+        static_array_declaration!(TEST_CONST_SLICE = test_enum),
+        format!("static TEST_CONST_SLICE: [TestEnum; 3] = [TestEnum::Variant1,TestEnum::Variant2(7u8,),TestEnum::Variant1];")
+    );
 }
 
 #[test]
@@ -250,5 +344,10 @@ fn test_const_array_tuples()
     (
         const_array_declaration!(TEST_CONST_TUP = test_enum),
         format!("const TEST_CONST_TUP: ([TestEnum; 1],[i8; 3]) = ([TestEnum::Variant2(0u8,)],[1i8,2i8,3i8]);")
+    );
+    assert_eq!
+    (
+        static_array_declaration!(TEST_CONST_TUP = test_enum),
+        format!("static TEST_CONST_TUP: ([TestEnum; 1],[i8; 3]) = ([TestEnum::Variant2(0u8,)],[1i8,2i8,3i8]);")
     );
 }
