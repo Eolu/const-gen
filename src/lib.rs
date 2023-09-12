@@ -4,7 +4,7 @@
 #[cfg(not(feature = "std"))]
 include!("no_std.rs");
 #[cfg(feature = "std")]
-use std::{borrow::Cow, collections::HashSet, rc::Rc, sync::Arc};
+use std::{borrow::Cow, collections::HashSet, rc::Rc, sync::Arc, fmt::Display};
 
 #[cfg(feature = "phf")]
 use std::collections::HashMap;
@@ -74,6 +74,24 @@ macro_rules! static_array_declaration
     }
 }
 
+/// Enum representing the type of declaration to generate, e.g. `const` or `static`.
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum DeclarationType {
+    Const,
+    Static,
+}
+
+impl Display for DeclarationType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(
+            match self {
+                DeclarationType::Const => "const",
+                DeclarationType::Static => "static"
+            }
+        )
+    }
+}
+
 /// Trait which defines how a type should be represented as a constant
 pub trait CompileConst {
     /// Get a string representation of a type. This must be implemented for each
@@ -83,37 +101,51 @@ pub trait CompileConst {
     fn const_type() -> String;
     /// Get a string representation of the current value in constant form.
     fn const_val(&self) -> String;
-    /// Takes 3 strings: Attrbibutes, a visibility (eg pub) and a name
-    /// (a SCREAMING_SNAKE_CASE string is preferred) to use as a constant name,
-    /// then calls self.const_type() and self.const_val() in order to generate a
-    /// Rust compile-time constant declaration statement.
-    fn const_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
+    /// Generates the declaration statement string.
+    ///
+    /// Takes 3 strings: Attributes, a visibility (eg pub) and a name (a SCREAMING_SNAKE_CASE string is preferred),
+    /// plus a [declaration type](DeclarationType) (e.g. const or static).
+    ///
+    /// It then constructs a valid Rust declaration statement using the type and value of the current object by calling [const_val()](CompileConst::const_val) and [const_type()](CompileConst::const_type).
+    ///
+    ///```rust
+    /// use const_gen::{CompileConst, DeclarationType};
+    ///
+    /// let test_str_declaration = "I'm a string!".declaration(
+    ///    "#[allow(dead_code)]",
+    ///    "pub(crate)",
+    ///    DeclarationType::Const,
+    ///    "TEST_STR",
+    /// );
+    /// assert_eq!(
+    ///    test_str_declaration,
+    ///    r#"#[allow(dead_code)] pub(crate) const TEST_STR: &'static str = "I'm a string!";"#
+    /// );
+    ///```
+    fn declaration(&self, attrs: &str, vis: &str, declaration_type: DeclarationType, name: &str) -> String {
         format!(
-            "{}{}{}{}const {}: {} = {};",
+            "{}{}{}{}{} {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
             if attrs.is_empty() { "" } else { " " },
             vis,
             if vis.is_empty() { "" } else { " " },
+            declaration_type,
             name,
             Self::const_type(),
             self.const_val()
         )
     }
-    /// Takes 3 strings: Attrbibutes, a visibility (eg pub) and a name
-    /// (a SCREAMING_SNAKE_CASE string is preferred) to use as the static's name,
-    /// then calls self.const_type() and self.const_val() in order to generate a
-    /// Rust compile-time static declaration statement.
+    /// Generates the declaration statement string for a `const` declaration.
+    ///
+    /// See [declaration()](CompileConst::declaration) for more information.
+    fn const_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
+        self.declaration(attrs, vis, DeclarationType::Const, name)
+    }
+    /// Generates the declaration statement string for a `static` declaration.
+    ///
+    /// See [declaration()](CompileConst::declaration) for more information.
     fn static_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
-        format!(
-            "{}{}{}{}static {}: {} = {};",
-            if attrs.is_empty() { "" } else { attrs },
-            if attrs.is_empty() { "" } else { " " },
-            vis,
-            if vis.is_empty() { "" } else { " " },
-            name,
-            Self::const_type(),
-            self.const_val()
-        )
+        self.declaration(attrs, vis, DeclarationType::Static, name)
     }
     /// Return a const definition for this type. Attributes may be included, and
     /// must be formatted as the compiler would expect to see them (including
@@ -129,35 +161,32 @@ pub trait CompileConst {
 
 /// Trait which defines how an array-representable type should be represented as a const array
 pub trait CompileConstArray {
-    /// Like const_type, but for a fixed-size array.
+    /// Like [const_type](CompileConst::const_type), but for a fixed-size array.
     fn const_array_type(&self) -> String;
-    /// Like const_val, but for a fixed-size array.
+    /// Like [const_val](CompileConst::const_val), but for a fixed-size array.
     fn const_array_val(&self) -> String;
-    /// Like const_declaration, but for a fixed-size array.
-    fn const_array_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
+    /// Like [declaration](CompileConst::declaration), but for a fixed-size array.
+    fn array_declaration(&self, attrs: &str, vis: &str, declaration_type: DeclarationType, name: &str) -> String {
         format!(
-            "{}{}{}{}const {}: {} = {};",
+            "{}{}{}{}{} {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
             if attrs.is_empty() { "" } else { " " },
             vis,
             if vis.is_empty() { "" } else { " " },
+            declaration_type,
             name,
             self.const_array_type(),
             self.const_array_val()
         )
     }
-    /// Like static_declaration, but for a fixed-size array.
+
+    /// Like [const_declaration](CompileConst::const_declaration), but for a fixed-size array.
+    fn const_array_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
+        self.array_declaration(attrs, vis, DeclarationType::Const, name)
+    }
+    /// Like [static_declaration](CompileConst::static_declaration), but for a fixed-size array.
     fn static_array_declaration(&self, attrs: &str, vis: &str, name: &str) -> String {
-        format!(
-            "{}{}{}{}static {}: {} = {};",
-            if attrs.is_empty() { "" } else { attrs },
-            if attrs.is_empty() { "" } else { " " },
-            vis,
-            if vis.is_empty() { "" } else { " " },
-            name,
-            self.const_array_type(),
-            self.const_array_val()
-        )
+        self.array_declaration(attrs, vis, DeclarationType::Static, name)
     }
 }
 
@@ -288,8 +317,7 @@ macro_rules! derefs
         )*
     }
 }
-derefs!
-(
+derefs!(
     Box<T>,
     Cow<'_, T> => Clone,
     Rc<T>,
