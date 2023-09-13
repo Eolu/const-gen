@@ -8,4 +8,5 @@ use alloc::{
     string::{String, ToString},
     sync::Arc,
     vec::Vec,
+    fmt::Display,
 };

@@ -77,7 +77,10 @@ fn main()
         const_declaration!(TEST_ENUM = test_enum),
         const_declaration!(TEST_ENUM_TUP = test_enum_tup),
         const_declaration!(TEST_ENUM_STRUCTLIKE = 
-            test_enum_structlike)
+            test_enum_structlike),
+       
+       // or generate static's with the static_declaration macro
+       static_declaration!(pub static TEST_U8_STATIC = 27u8),
     }.join("\n");
 
     // Note: The `const_definition!` and `const_declaration!` 
@@ -161,6 +164,7 @@ const TEST_ENUM_STRUCTLIKE: TestEnum = TestEnum::Variant3
 { 
     named: 78u8
 };
+static TEST_U8_STATIC: u8 = 27u8;
 ```
 
 ## Out-of-the-box Implementations
