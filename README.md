@@ -79,7 +79,7 @@ fn main()
         const_declaration!(TEST_ENUM_STRUCTLIKE = 
             test_enum_structlike),
        
-       // or generate static's with the static_declaration macro
+       // or generate statics with the static_declaration macro
        static_declaration!(pub static TEST_U8_STATIC = 27u8),
     }.join("\n");
 

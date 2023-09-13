@@ -1,3 +1,6 @@
+# 1.5.0
+- Added `static_declaration` to generate `static` constants instead of `const` constants.
+
 # 1.4.0 
 - Added no_std support, enabled by disabled the `std` default feature.
 
