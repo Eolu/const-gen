@@ -1,6 +1,8 @@
 #![cfg_attr(all(not(feature = "std"), not(test)), no_std)]
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 
+#![forbid(clippy::format_push_string)]
+
 #[cfg(not(feature = "std"))]
 include!("no_std.rs");
 #[cfg(feature = "std")]
@@ -356,7 +358,7 @@ impl<K: CompileConst, V: CompileConst> CompileConst for HashMap<K, V> {
     fn const_val(&self) -> String {
         format!(
             "phf::phf_map!{{{}}}",
-            self.into_iter()
+            self.iter()
                 .map(|(k, v)| format!("{} => {}", k.const_val(), v.const_val()))
                 .collect::<Vec<String>>()
                 .join(",")
@@ -373,8 +375,8 @@ impl<E: CompileConst> CompileConst for HashSet<E> {
     fn const_val(&self) -> String {
         format!(
             "phf::phf_set!{{{}}}",
-            self.into_iter()
-                .map(|e| format!("{}", e.const_val()))
+            self.iter()
+                .map(|e| e.const_val().to_string())
                 .collect::<Vec<String>>()
                 .join(",")
         )

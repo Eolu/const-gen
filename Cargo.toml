@@ -1,6 +1,6 @@
 [package]
 name = "const-gen"
-version = "1.5.0"
+version = "1.5.1"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 authors = ["Griffin O'Neill <gsoneill1003@gmail.com>"]
