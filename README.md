@@ -24,12 +24,14 @@ struct TestStruct
 struct TestTup(u8, u16);
 
 #[derive(CompileConst)]
-#[inherit_doc]
+#[inherit_docs]
 /// Example inherited documentation
 enum TestEnum
 {
     Variant1,
     Variant2(u8),
+    #[inherit_doc]
+    /// Example inherited variant documentation
     Variant3 { named: u8 }
 }
 
@@ -143,6 +145,7 @@ enum TestEnum
 {
     Variant1,
     Variant2(u8),
+    /// Example inherited variant documentation
     Variant3 { named: u8 },
 }
 const TEST_U8: u8 = 27u8;
@@ -194,6 +197,14 @@ There is also a CompileConstArray trait which generates fixed-size arrays rather
 |Box\<T\>, Cow\<T\>, Rc\<T\>, Arc\<T\>|T's CompileConstArray representation|
 |()|no conversion|
 |\<tuples with 2-16 variants\>|A tuple with the CompileConstArray representation of each variant. Only supported if each variant implements CompileConstArray.|
+
+## Attributes
+
+#[inherit_doc]
+The generated definition will inhereit the documentation of the source item. This can be applied seperately to enum variants.
+
+#[inherit_docs]
+The generated definition will inhereit the documentation of the source item, as well as internal items (currently applies only to enum variants).
 
 ## Limitations
 

@@ -72,8 +72,11 @@ fn test_tup_struct()
 
 #[cfg(feature = "derive")]
 #[derive(CompileConst)]
+#[inherit_docs]
+/// Test inherited enum doc
 enum TestEnum
 {
+    /// Test inherited variant doc
     Variant1,
     Variant2(u8),
     Variant3 { named: u8 }

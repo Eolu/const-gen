@@ -1,3 +1,6 @@
+# 1.6.0
+- Now supports inheriting documentation of enum variants.
+
 # 1.5.0
 - Added `static_declaration` to generate `static` constants instead of `const` constants.
 
