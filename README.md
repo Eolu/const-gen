@@ -14,14 +14,14 @@ use std::{env, fs, path::Path};
 // CompileConst trait by hand is straightforward.
 
 #[derive(CompileConst)]
+#[inherit_doc]
+/// Example inherited documentation
 struct TestStruct
 {
     test_u8: u8,
+    /// Example inherited field documentation
     test_vec: Vec<String>,
 }
-
-#[derive(CompileConst)]
-struct TestTup(u8, u16);
 
 #[derive(CompileConst)]
 #[inherit_docs]
@@ -34,6 +34,9 @@ enum TestEnum
     /// Example inherited variant documentation
     Variant3 { named: u8 }
 }
+
+#[derive(CompileConst)]
+struct TestTup(u8, u16);
 
 fn main() 
 {

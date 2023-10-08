@@ -1,3 +1,6 @@
+# 1.6.1
+- Added struct and union fields to the below update.
+
 # 1.6.0
 - Now supports inheriting documentation of enum variants.
 

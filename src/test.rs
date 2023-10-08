@@ -23,7 +23,7 @@ fn test_struct()
     assert_eq!
     (
         const_definition!(#[derive(Debug)] TestStruct), 
-        format!("#[derive(Debug)] struct TestStruct{{  test_u8: u8,  test_vec: &\'static [&\'static str], }}")
+        format!("#[derive(Debug)] struct TestStruct{{   test_u8: u8,   test_vec: &\'static [&\'static str], }}")
     );
     assert_eq!
     (
@@ -43,7 +43,7 @@ fn test_struct_definition()
     assert_eq!
     (
         const_definition!(#[derive(Debug)] TestStruct), 
-        format!("#[derive(Debug)] struct TestStruct{{  test_u8: u8,  test_vec: &\'static [&\'static str], }}")
+        format!("#[derive(Debug)] struct TestStruct{{   test_u8: u8,   test_vec: &\'static [&\'static str], }}")
     );
 }
 
