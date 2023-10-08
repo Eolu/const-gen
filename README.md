@@ -19,7 +19,7 @@ use std::{env, fs, path::Path};
 struct TestStruct
 {
     test_u8: u8,
-    /// Example inherited field documentation
+    /// Example uninherited field documentation
     test_vec: Vec<String>,
 }
 
@@ -204,10 +204,10 @@ There is also a CompileConstArray trait which generates fixed-size arrays rather
 ## Attributes
 
 #[inherit_doc]
-The generated definition will inhereit the documentation of the source item. This can be applied seperately to enum variants.
+The generated definition will inherit the documentation of the source item.
 
 #[inherit_docs]
-The generated definition will inhereit the documentation of the source item, as well as internal items (currently applies only to enum variants).
+The generated definition will inherit the documentation of the source item, as well as internal items (fields and variants).
 
 ## Limitations
 
