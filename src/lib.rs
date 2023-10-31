@@ -121,7 +121,7 @@ pub trait CompileConst {
     /// );
     /// assert_eq!(
     ///    test_str_declaration,
-    ///    r#"#[allow(dead_code)] pub(crate) const TEST_STR: &'static str = "I'm a string!";"#
+    ///    r#"#[allow(dead_code)] pub(crate) const TEST_STR: &str = "I'm a string!";"#
     /// );
     ///```
     fn declaration(&self, attrs: &str, vis: &str, declaration_type: DeclarationType, name: &str) -> String {
@@ -221,7 +221,7 @@ macro_rules! strings
         {
             fn const_type() -> String
             {
-                "&'static str".to_string()
+                "&str".to_string()
             }
 
             fn const_val(&self) -> String
@@ -255,7 +255,7 @@ macro_rules! slices
         {
             fn const_type() -> String
             {
-                format!("&'static [{}]", T::const_type())
+                format!("&[{}]", T::const_type())
             }
 
             fn const_val(&self) -> String

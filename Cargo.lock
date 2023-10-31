@@ -4,7 +4,7 @@ version = 3
 
 [[package]]
 name = "const-gen"
-version = "1.6.2"
+version = "1.6.3"
 dependencies = [
  "const-gen-derive",
 ]
