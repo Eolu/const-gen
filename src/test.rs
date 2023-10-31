@@ -14,7 +14,7 @@ struct TestStruct
 /// struct TestStruct
 /// {
 ///    test_u8: u8,
-///    test_vec: &'static [&'static str],
+///    test_vec: &[&str],
 /// }
 #[test]
 fn test_struct()
@@ -23,7 +23,7 @@ fn test_struct()
     assert_eq!
     (
         const_definition!(#[derive(Debug)] TestStruct), 
-        format!("#[derive(Debug)] struct TestStruct{{   test_u8: u8,   test_vec: &\'static [&\'static str], }}")
+        format!("#[derive(Debug)] struct TestStruct{{   test_u8: u8,   test_vec: &[&str], }}")
     );
     assert_eq!
     (
@@ -43,7 +43,7 @@ fn test_struct_definition()
     assert_eq!
     (
         const_definition!(#[derive(Debug)] TestStruct), 
-        format!("#[derive(Debug)] struct TestStruct{{   test_u8: u8,   test_vec: &\'static [&\'static str], }}")
+        format!("#[derive(Debug)] struct TestStruct{{   test_u8: u8,   test_vec: &[&str], }}")
     );
 }
 
@@ -136,34 +136,34 @@ fn test_strings()
     assert_eq!
     (
         const_declaration!(pub(crate) TEST_STR = "I'm a string!"),
-        format!("pub(crate)  const TEST_STR: &'static str = \"I'm a string!\";")
+        format!("pub(crate)  const TEST_STR: &str = \"I'm a string!\";")
     );
     assert_eq!
     (
         const_declaration!(TEST_STRING = String::from("I'm a string!")),
-        format!("const TEST_STRING: &'static str = \"I'm a string!\";")
+        format!("const TEST_STRING: &str = \"I'm a string!\";")
     );
     assert_eq!
     (
         const_declaration!(TEST_COW = std::borrow::Cow::from("I'm a string!")),
-        format!("const TEST_COW: &'static str = \"I'm a string!\";")
+        format!("const TEST_COW: &str = \"I'm a string!\";")
     );
 
     // statics
     assert_eq!
     (
         static_declaration!(pub(crate) TEST_STR = "I'm a string!"),
-        format!("pub(crate)  static TEST_STR: &'static str = \"I'm a string!\";")
+        format!("pub(crate)  static TEST_STR: &str = \"I'm a string!\";")
     );
     assert_eq!
     (
         static_declaration!(TEST_STRING = String::from("I'm a string!")),
-        format!("static TEST_STRING: &'static str = \"I'm a string!\";")
+        format!("static TEST_STRING: &str = \"I'm a string!\";")
     );
     assert_eq!
     (
         static_declaration!(TEST_COW = std::borrow::Cow::from("I'm a string!")),
-        format!("static TEST_COW: &'static str = \"I'm a string!\";")
+        format!("static TEST_COW: &str = \"I'm a string!\";")
     );
 }
 
@@ -210,12 +210,12 @@ fn test_map()
     assert_eq!
     (
         const_declaration!(TEST_MAP = test_map),
-        format!("const TEST_MAP: phf::Map<&\'static str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
+        format!("const TEST_MAP: phf::Map<&str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
     );
     assert_eq!
     (
         static_declaration!(TEST_MAP = test_map),
-        format!("static TEST_MAP: phf::Map<&\'static str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
+        format!("static TEST_MAP: phf::Map<&str, i32> = phf::phf_map!{{\"str\" => 67i32}};")
     );
 }
 
@@ -244,12 +244,12 @@ fn test_vec()
     assert_eq!
     (
         const_declaration!(TEST_VEC = test_vec),
-        format!("const TEST_VEC: &'static [u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
+        format!("const TEST_VEC: &[u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
     );
     assert_eq!
     (
         static_declaration!(TEST_VEC = test_vec),
-        format!("static TEST_VEC: &'static [u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
+        format!("static TEST_VEC: &[u8] = &[1u8,2u8,3u8,4u8,5u8,10u8,4u8];")
     );
 }
 
