@@ -221,7 +221,7 @@ macro_rules! strings
         {
             fn const_type() -> String
             {
-                "&str".to_string()
+                "&'static str".to_string()
             }
 
             fn const_val(&self) -> String
@@ -255,7 +255,7 @@ macro_rules! slices
         {
             fn const_type() -> String
             {
-                format!("&[{}]", T::const_type())
+                format!("&'static [{}]", T::const_type())
             }
 
             fn const_val(&self) -> String
