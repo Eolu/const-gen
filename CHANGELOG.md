@@ -1,3 +1,6 @@
+# 1.6.5
+- Fixed a regression in new versions of Rust
+
 # 1.6.1
 - Added struct and union fields to the below update.
 
