@@ -1,12 +1,11 @@
 #![cfg_attr(all(not(feature = "std"), not(test)), no_std)]
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
-
 #![forbid(clippy::format_push_string)]
 
 #[cfg(not(feature = "std"))]
 include!("no_std.rs");
 #[cfg(feature = "std")]
-use std::{borrow::Cow, collections::HashSet, rc::Rc, sync::Arc, fmt::Display};
+use std::{borrow::Cow, collections::HashSet, fmt::Display, rc::Rc, sync::Arc};
 
 #[cfg(feature = "phf")]
 use std::collections::HashMap;
@@ -16,6 +15,9 @@ pub use const_gen_derive::*;
 
 #[cfg(test)]
 mod test;
+
+#[cfg(feature = "either")]
+mod either;
 
 /// A macro to help in the creation of const definitions. Allows this syntax:
 /// `const_definition!(#[attribute1] #[attributeN] visibility TypeName)`
@@ -85,12 +87,10 @@ pub enum DeclarationType {
 
 impl Display for DeclarationType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(
-            match self {
-                DeclarationType::Const => "const",
-                DeclarationType::Static => "static"
-            }
-        )
+        f.write_str(match self {
+            DeclarationType::Const => "const",
+            DeclarationType::Static => "static",
+        })
     }
 }
 
@@ -124,7 +124,13 @@ pub trait CompileConst {
     ///    r#"#[allow(dead_code)] pub(crate) const TEST_STR: &str = "I'm a string!";"#
     /// );
     ///```
-    fn declaration(&self, attrs: &str, vis: &str, declaration_type: DeclarationType, name: &str) -> String {
+    fn declaration(
+        &self,
+        attrs: &str,
+        vis: &str,
+        declaration_type: DeclarationType,
+        name: &str,
+    ) -> String {
         format!(
             "{}{}{}{}{} {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
@@ -168,7 +174,13 @@ pub trait CompileConstArray {
     /// Like [const_val](CompileConst::const_val), but for a fixed-size array.
     fn const_array_val(&self) -> String;
     /// Like [declaration](CompileConst::declaration), but for a fixed-size array.
-    fn array_declaration(&self, attrs: &str, vis: &str, declaration_type: DeclarationType, name: &str) -> String {
+    fn array_declaration(
+        &self,
+        attrs: &str,
+        vis: &str,
+        declaration_type: DeclarationType,
+        name: &str,
+    ) -> String {
         format!(
             "{}{}{}{}{} {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
