@@ -220,9 +220,11 @@ At the current time, all features are default.
 ### phf
 The `phf` feature implements the CompileConst trait for HashMaps and HashSets. It will generate a `phf::Map` for HashMap types and a `phf::Set` for HashSet types. Note that `phf` does NOT need to be included in your build dependencies, but it ought to be included in your runtime dependencies in order to use the constants.
 
+### either
+The `either` feature implements the CompileConst trait for [Either](https://docs.rs/either/latest/either/).
+
 ### derive
 The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The requirement is that all members implement `CompileConst` as well. The #[inherit_docs] attribute may be added to cause generated definition to inherit rustdocs. 
-
 
 ### std
 The `std` default feature can be disabled to use the `alloc` crate in place of `std` constructs.

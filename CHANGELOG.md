@@ -1,3 +1,6 @@
+# 1.6.6
+- Added 'either' support
+
 # 1.6.5
 - Fixed a regression in new versions of Rust
 
