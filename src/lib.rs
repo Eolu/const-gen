@@ -13,6 +13,9 @@ use std::collections::HashMap;
 #[cfg(feature = "derive")]
 pub use const_gen_derive::*;
 
+#[cfg(feature = "net")]
+pub use net::*;
+
 #[cfg(test)]
 mod test;
 
@@ -394,6 +397,104 @@ impl<E: CompileConst> CompileConst for HashSet<E> {
         )
     }
 }
+
+#[cfg(feature = "net")]
+mod net {
+    use crate::CompileConst;
+    use core::net::*;
+
+    impl CompileConst for Ipv4Addr {
+        fn const_type() -> String {
+            "Ipv4Addr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "Ipv4Addr::new({})",
+                self.octets()
+                    .iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<String>>()
+                    .join(",")
+            )
+        }
+    }
+
+    impl CompileConst for Ipv6Addr {
+        fn const_type() -> String {
+            "Ipv6Addr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "Ipv6Addr::new({})",
+                self.segments()
+                    .iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<String>>()
+                    .join(",")
+            )
+        }
+    }
+
+    impl CompileConst for IpAddr {
+        fn const_type() -> String {
+            "IpAddr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            match self {
+                IpAddr::V4(ipv4) => format!("IpAddr::V4({})", ipv4.const_val()),
+                IpAddr::V6(ipv6) => format!("IpAddr::V6({})", ipv6.const_val()),
+            }
+        }
+    }
+
+    impl CompileConst for SocketAddr {
+        fn const_type() -> String {
+            "SocketAddr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "SocketAddr::new({}, {})",
+                self.ip().const_val(),
+                self.port()
+            )
+        }
+    }
+
+    impl CompileConst for SocketAddrV4 {
+        fn const_type() -> String {
+            "SocketAddrV4".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "SocketAddrV4::new({}, {})",
+                self.ip().const_val(),
+                self.port()
+            )
+        }
+    }
+
+    impl CompileConst for SocketAddrV6 {
+        fn const_type() -> String {
+            "SocketAddrV6".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "SocketAddrV6::new({}, {}, {}, {})",
+                self.ip().const_val(),
+                self.port(),
+                self.flowinfo(),
+                self.scope_id()
+            )
+        }
+    }
+}
+
 
 macro_rules! arrays
 {
