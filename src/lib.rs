@@ -13,9 +13,6 @@ use std::collections::HashMap;
 #[cfg(feature = "derive")]
 pub use const_gen_derive::*;
 
-#[cfg(feature = "net")]
-pub use net::*;
-
 #[cfg(test)]
 mod test;
 
@@ -405,12 +402,12 @@ mod net {
 
     impl CompileConst for Ipv4Addr {
         fn const_type() -> String {
-            "Ipv4Addr".to_owned()
+            "core::net::Ipv4Addr".to_owned()
         }
 
         fn const_val(&self) -> String {
             format!(
-                "Ipv4Addr::new({})",
+                "core::net::Ipv4Addr::new({})",
                 self.octets()
                     .iter()
                     .map(|x| x.to_string())
@@ -422,12 +419,12 @@ mod net {
 
     impl CompileConst for Ipv6Addr {
         fn const_type() -> String {
-            "Ipv6Addr".to_owned()
+            "core::net::Ipv6Addr".to_owned()
         }
 
         fn const_val(&self) -> String {
             format!(
-                "Ipv6Addr::new({})",
+                "core::net::Ipv6Addr::new({})",
                 self.segments()
                     .iter()
                     .map(|x| x.to_string())
@@ -439,25 +436,25 @@ mod net {
 
     impl CompileConst for IpAddr {
         fn const_type() -> String {
-            "IpAddr".to_owned()
+            "core::net::IpAddr".to_owned()
         }
 
         fn const_val(&self) -> String {
             match self {
-                IpAddr::V4(ipv4) => format!("IpAddr::V4({})", ipv4.const_val()),
-                IpAddr::V6(ipv6) => format!("IpAddr::V6({})", ipv6.const_val()),
+                IpAddr::V4(ipv4) => format!("core::net::IpAddr::V4({})", ipv4.const_val()),
+                IpAddr::V6(ipv6) => format!("core::net::IpAddr::V6({})", ipv6.const_val()),
             }
         }
     }
 
     impl CompileConst for SocketAddr {
         fn const_type() -> String {
-            "SocketAddr".to_owned()
+            "core::net::SocketAddr".to_owned()
         }
 
         fn const_val(&self) -> String {
             format!(
-                "SocketAddr::new({}, {})",
+                "core::net::SocketAddr::new({}, {})",
                 self.ip().const_val(),
                 self.port()
             )
@@ -466,12 +463,12 @@ mod net {
 
     impl CompileConst for SocketAddrV4 {
         fn const_type() -> String {
-            "SocketAddrV4".to_owned()
+            "core::net::SocketAddrV4".to_owned()
         }
 
         fn const_val(&self) -> String {
             format!(
-                "SocketAddrV4::new({}, {})",
+                "core::net::SocketAddrV4::new({}, {})",
                 self.ip().const_val(),
                 self.port()
             )
@@ -480,12 +477,12 @@ mod net {
 
     impl CompileConst for SocketAddrV6 {
         fn const_type() -> String {
-            "SocketAddrV6".to_owned()
+            "core::net::SocketAddrV6".to_owned()
         }
 
         fn const_val(&self) -> String {
             format!(
-                "SocketAddrV6::new({}, {}, {}, {})",
+                "core::net::SocketAddrV6::new({}, {}, {}, {})",
                 self.ip().const_val(),
                 self.port(),
                 self.flowinfo(),
