@@ -338,6 +338,16 @@ derefs!(
     Arc<T>
 );
 
+impl CompileConst for char {
+    fn const_type() -> String {
+        "char".to_owned()
+    }
+
+    fn const_val(&self) -> String {
+        format!("'{}'", *self)
+    }
+}
+
 impl CompileConst for bool {
     fn const_type() -> String {
         "bool".to_owned()
