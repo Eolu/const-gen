@@ -191,6 +191,14 @@ The following table shows what types have implementations of the CompileConst tr
 |()|no conversion|
 |\<tuples with 2-16 variants\>|A tuple with the CompileConst representation of each variant|
 
+In addition, the following core::net types have implementations: 
+- [Ipv4Addr](https://doc.rust-lang.org/core/net/struct.Ipv4Addr.html)
+- [Ipv6Addr](https://doc.rust-lang.org/core/net/struct.Ipv6Addr.html)
+- [IpAddr](https://doc.rust-lang.org/core/net/enum.IpAddr.html)
+- [SocketAddr](https://doc.rust-lang.org/core/net/enum.SocketAddr.html)
+- [SocketAddrV4](https://doc.rust-lang.org/core/net/struct.SocketAddrV4.html)
+- [SocketAddrV6](https://doc.rust-lang.org/core/net/struct.SocketAddrV6.html)   
+
 There is also a CompileConstArray trait which generates fixed-size arrays rather than static slices for the following
 
 |Type|Const Array Representation|
@@ -228,12 +236,3 @@ The `derive` feature adds `#[derive(CompileConst)]` for structs and enums. The r
 
 ### std
 The `std` default feature can be disabled to use the `alloc` crate in place of `std` constructs.
-
-### net
-The `net` feature implements the CompileConst trait for various network types from the standard library, including:
-- [Ipv4Addr](https://doc.rust-lang.org/core/net/struct.Ipv4Addr.html)
-- [Ipv6Addr](https://doc.rust-lang.org/core/net/struct.Ipv6Addr.html)
-- [IpAddr](https://doc.rust-lang.org/core/net/enum.IpAddr.html)
-- [SocketAddr](https://doc.rust-lang.org/core/net/enum.SocketAddr.html)
-- [SocketAddrV4](https://doc.rust-lang.org/core/net/struct.SocketAddrV4.html)
-- [SocketAddrV6](https://doc.rust-lang.org/core/net/struct.SocketAddrV6.html)

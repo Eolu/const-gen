@@ -1,3 +1,6 @@
+# 1.6.8
+- `core::net` types added.
+
 # 1.6.7
 - Finally added `char` support (oops!)
 

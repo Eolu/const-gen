@@ -1,6 +1,6 @@
 [package]
 name = "const-gen"
-version = "1.6.7"
+version = "1.6.8"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 authors = ["Griffin O'Neill <gsoneill1003@gmail.com>"]
@@ -24,7 +24,6 @@ std = []
 phf = ["std"]
 derive = ["const-gen-derive"]
 either = ["dep:either"]
-net = []
 
 [dependencies]
 const-gen-derive = { version = "1.1.6", optional = true }
