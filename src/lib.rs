@@ -405,6 +405,104 @@ impl<E: CompileConst> CompileConst for HashSet<E> {
     }
 }
 
+#[cfg(feature = "net")]
+mod net {
+    use crate::CompileConst;
+    use core::net::*;
+
+    impl CompileConst for Ipv4Addr {
+        fn const_type() -> String {
+            "core::net::Ipv4Addr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "core::net::Ipv4Addr::new({})",
+                self.octets()
+                    .iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<String>>()
+                    .join(",")
+            )
+        }
+    }
+
+    impl CompileConst for Ipv6Addr {
+        fn const_type() -> String {
+            "core::net::Ipv6Addr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "core::net::Ipv6Addr::new({})",
+                self.segments()
+                    .iter()
+                    .map(|x| x.to_string())
+                    .collect::<Vec<String>>()
+                    .join(",")
+            )
+        }
+    }
+
+    impl CompileConst for IpAddr {
+        fn const_type() -> String {
+            "core::net::IpAddr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            match self {
+                IpAddr::V4(ipv4) => format!("core::net::IpAddr::V4({})", ipv4.const_val()),
+                IpAddr::V6(ipv6) => format!("core::net::IpAddr::V6({})", ipv6.const_val()),
+            }
+        }
+    }
+
+    impl CompileConst for SocketAddr {
+        fn const_type() -> String {
+            "core::net::SocketAddr".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "core::net::SocketAddr::new({}, {})",
+                self.ip().const_val(),
+                self.port()
+            )
+        }
+    }
+
+    impl CompileConst for SocketAddrV4 {
+        fn const_type() -> String {
+            "core::net::SocketAddrV4".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "core::net::SocketAddrV4::new({}, {})",
+                self.ip().const_val(),
+                self.port()
+            )
+        }
+    }
+
+    impl CompileConst for SocketAddrV6 {
+        fn const_type() -> String {
+            "core::net::SocketAddrV6".to_owned()
+        }
+
+        fn const_val(&self) -> String {
+            format!(
+                "core::net::SocketAddrV6::new({}, {}, {}, {})",
+                self.ip().const_val(),
+                self.port(),
+                self.flowinfo(),
+                self.scope_id()
+            )
+        }
+    }
+}
+
+
 macro_rules! arrays
 {
     ($($n:literal),*) =>

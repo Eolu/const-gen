@@ -19,11 +19,12 @@ name = "const_gen"
 path = "src/lib.rs"
 
 [features]
-default = ["std", "derive", "phf"]
+default = ["std", "derive", "phf", "net"]
 std = []
 phf = ["std"]
 derive = ["const-gen-derive"]
 either = ["dep:either"]
+net = []
 
 [dependencies]
 const-gen-derive = { version = "1.1.6", optional = true }
