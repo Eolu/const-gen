@@ -1,3 +1,6 @@
+# 1.6.7
+- Finally added `char` support (oops!)
+
 # 1.6.6
 - Added 'either' support
 
