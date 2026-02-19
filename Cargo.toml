@@ -26,5 +26,5 @@ derive = ["const-gen-derive"]
 either = ["dep:either"]
 
 [dependencies]
-const-gen-derive = { version = "1.1.6", optional = true }
+const-gen-derive = { version = "1.1.7", optional = true }
 either = { version = "1.13.0", optional = true }
