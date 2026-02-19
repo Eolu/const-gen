@@ -123,7 +123,7 @@ pub trait CompileConst {
     /// );
     /// assert_eq!(
     ///    test_str_declaration,
-    ///    r#"#[allow(dead_code)] pub(crate) const TEST_STR: &str = "I'm a string!";"#
+    ///    r#"#[allow(clippy::redundant_static_lifetimes)] #[allow(dead_code)] pub(crate) const TEST_STR: &'static str = "I'm a string!";"#
     /// );
     ///```
     fn declaration(
@@ -134,7 +134,7 @@ pub trait CompileConst {
         name: &str,
     ) -> String {
         format!(
-            "{}{}{}{}{} {}: {} = {};",
+            "#[allow(clippy::redundant_static_lifetimes)] {}{}{}{}{} {}: {} = {};",
             if attrs.is_empty() { "" } else { attrs },
             if attrs.is_empty() { "" } else { " " },
             vis,
@@ -497,7 +497,6 @@ impl CompileConst for SocketAddrV6 {
         )
     }
 }
-
 
 macro_rules! arrays
 {
