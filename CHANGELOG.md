@@ -1,3 +1,6 @@
+# 1.6.9
+- Annotated everything naively with `#[allow(clippy::redundant_static_lifetimes)]`.
+
 # 1.6.8
 - `core::net` types added.
 
