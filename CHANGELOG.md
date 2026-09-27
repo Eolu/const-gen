@@ -1,3 +1,6 @@
+# 1.6.10
+- Fix use of std ungated.
+
 # 1.6.9
 - Annotated everything naively with `#[allow(clippy::redundant_static_lifetimes)]`.
 

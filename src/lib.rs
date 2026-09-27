@@ -2,6 +2,8 @@
 #![doc = include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/README.md"))]
 #![forbid(clippy::format_push_string)]
 
+extern crate alloc;
+
 use core::net::*;
 
 #[cfg(not(feature = "std"))]
@@ -88,7 +90,7 @@ pub enum DeclarationType {
 }
 
 impl Display for DeclarationType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut alloc::fmt::Formatter<'_>) -> alloc::fmt::Result {
         f.write_str(match self {
             DeclarationType::Const => "const",
             DeclarationType::Static => "static",
